@@ -1,0 +1,2625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SCAMSHIELD AI | AI Scanner</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        :root {
+            --bg: #02070e;
+            --panel: #07111d;
+            --panel2: #091522;
+            --border: rgba(0, 217, 255, 0.13);
+            --cyan: #00d9ff;
+            --blue: #147bff;
+            --green: #00ff91;
+            --yellow: #ffd84d;
+            --red: #ff4058;
+            --text: #e9f7ff;
+            --muted: #71879b;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* ========================================
+           BACKGROUND
+        ======================================== */
+
+        #particles {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .background-glow {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+
+            background:
+                radial-gradient(
+                    circle at 25% 20%,
+                    rgba(0, 217, 255, 0.07),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 80% 80%,
+                    rgba(0, 90, 255, 0.06),
+                    transparent 30%
+                );
+        }
+
+        /* ========================================
+           APP
+        ======================================== */
+
+        .app {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ========================================
+           SIDEBAR
+        ======================================== */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+
+            width: 250px;
+
+            background: rgba(3, 10, 18, 0.95);
+            border-right: 1px solid var(--border);
+
+            padding: 24px 16px;
+
+            z-index: 50;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            padding: 5px 10px 30px;
+        }
+
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #00eaff,
+                    #006eff
+                );
+
+            color: #001018;
+            font-size: 20px;
+            font-weight: 900;
+
+            box-shadow:
+                0 0 22px rgba(0, 217, 255, 0.25);
+        }
+
+        .brand-name {
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+        }
+
+        .brand-subtitle {
+            margin-top: 4px;
+            color: var(--cyan);
+            font-size: 8px;
+            letter-spacing: 2px;
+        }
+
+        .menu-title {
+            padding: 0 11px;
+            margin: 15px 0 10px;
+
+            color: #40586b;
+            font-size: 9px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            width: 100%;
+
+            padding: 13px 12px;
+
+            border: 1px solid transparent;
+            border-radius: 10px;
+
+            color: #71879b;
+
+            text-decoration: none;
+
+            font-size: 12px;
+
+            transition: 0.25s;
+        }
+
+        .nav-item:hover {
+            color: white;
+            background: rgba(0, 217, 255, 0.05);
+            border-color: rgba(0, 217, 255, 0.08);
+        }
+
+        .nav-item.active {
+            color: var(--cyan);
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(0, 217, 255, 0.09),
+                    transparent
+                );
+
+            border-color: rgba(0, 217, 255, 0.13);
+
+            box-shadow:
+                inset 3px 0 0 var(--cyan);
+        }
+
+        .nav-icon {
+            width: 18px;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        .sidebar-status {
+            position: absolute;
+            left: 16px;
+            right: 16px;
+            bottom: 22px;
+
+            padding: 14px;
+
+            border: 1px solid rgba(0, 255, 145, 0.1);
+            border-radius: 11px;
+
+            background: rgba(0, 255, 145, 0.025);
+        }
+
+        .online {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            color: var(--green);
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .online-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+            background: var(--green);
+
+            box-shadow: 0 0 9px var(--green);
+        }
+
+        .system-text {
+            margin-top: 8px;
+
+            color: #50677a;
+            font-size: 9px;
+        }
+
+        /* ========================================
+           MAIN
+        ======================================== */
+
+        .main {
+            width: calc(100% - 250px);
+            margin-left: 250px;
+
+            min-height: 100vh;
+
+            padding: 30px 35px 50px;
+        }
+
+        /* ========================================
+           TOP BAR
+        ======================================== */
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 30px;
+        }
+
+        .page-title h1 {
+            font-size: 26px;
+            letter-spacing: -0.5px;
+        }
+
+        .page-title p {
+            margin-top: 7px;
+
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .system-pill {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            padding: 9px 13px;
+
+            border: 1px solid rgba(0, 255, 145, 0.12);
+            border-radius: 20px;
+
+            color: #718b9e;
+            font-size: 10px;
+
+            background: rgba(0, 255, 145, 0.025);
+        }
+
+        .system-pill-dot {
+            width: 6px;
+            height: 6px;
+
+            background: var(--green);
+            border-radius: 50%;
+        }
+
+        .profile {
+            width: 36px;
+            height: 36px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #00d9ff,
+                    #006eff
+                );
+
+            color: #001018;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        /* ========================================
+           MODE SELECTOR
+        ======================================== */
+
+        .mode-panel {
+            padding: 20px;
+
+            border: 1px solid var(--border);
+            border-radius: 15px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(7, 17, 29, 0.96),
+                    rgba(4, 12, 21, 0.96)
+                );
+
+            margin-bottom: 20px;
+        }
+
+        .section-label {
+            color: #8da5b9;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+
+            margin-bottom: 14px;
+        }
+
+        .modes {
+            display: grid;
+            grid-template-columns:
+                repeat(5, 1fr);
+
+            gap: 10px;
+        }
+
+        .mode {
+            position: relative;
+
+            padding: 14px;
+
+            border: 1px solid rgba(115, 145, 168, 0.12);
+            border-radius: 11px;
+
+            background: rgba(0, 0, 0, 0.15);
+
+            color: #71879b;
+
+            cursor: pointer;
+
+            transition: 0.25s;
+        }
+
+        .mode:hover {
+            border-color: rgba(0, 217, 255, 0.25);
+            color: white;
+        }
+
+        .mode.active {
+            border-color: rgba(0, 217, 255, 0.45);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(0, 217, 255, 0.10),
+                    rgba(0, 110, 255, 0.04)
+                );
+
+            color: var(--cyan);
+
+            box-shadow:
+                0 0 20px rgba(0, 217, 255, 0.05);
+        }
+
+        .mode-icon {
+            font-size: 19px;
+            margin-bottom: 8px;
+        }
+
+        .mode-name {
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .mode-description {
+            margin-top: 4px;
+
+            color: #4e6679;
+            font-size: 8px;
+        }
+
+        /* ========================================
+           SCANNER GRID
+        ======================================== */
+
+        .scanner-grid {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1.6fr)
+                minmax(300px, 0.7fr);
+
+            gap: 20px;
+        }
+
+        /* ========================================
+           INPUT PANEL
+        ======================================== */
+
+        .input-panel {
+            padding: 25px;
+
+            border: 1px solid var(--border);
+            border-radius: 15px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(7, 17, 29, 0.96),
+                    rgba(4, 12, 21, 0.96)
+                );
+        }
+
+        .input-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 18px;
+        }
+
+        .input-header h2 {
+            font-size: 16px;
+        }
+
+        .ai-badge {
+            padding: 6px 10px;
+
+            border-radius: 20px;
+
+            color: var(--cyan);
+
+            border: 1px solid rgba(0, 217, 255, 0.16);
+            background: rgba(0, 217, 255, 0.04);
+
+            font-size: 8px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .input-area {
+            position: relative;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 250px;
+
+            resize: vertical;
+
+            padding: 18px;
+
+            border-radius: 12px;
+
+            border: 1px solid rgba(106, 136, 159, 0.15);
+
+            background:
+                rgba(1, 7, 14, 0.85);
+
+            color: white;
+
+            outline: none;
+
+            font-size: 12px;
+            line-height: 1.7;
+
+            transition: 0.25s;
+        }
+
+        textarea:focus {
+            border-color: rgba(0, 217, 255, 0.35);
+
+            box-shadow:
+                0 0 25px rgba(0, 217, 255, 0.04);
+        }
+
+        textarea::placeholder {
+            color: #3f5668;
+        }
+
+        .input-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-top: 12px;
+        }
+
+        .character-count {
+            color: #40576a;
+            font-size: 9px;
+        }
+
+        .clear-button {
+            border: none;
+            background: none;
+
+            color: #526b7d;
+
+            font-size: 9px;
+
+            cursor: pointer;
+        }
+
+        .clear-button:hover {
+            color: var(--cyan);
+        }
+
+        /* ========================================
+           SCAN BUTTON
+        ======================================== */
+
+        .scan-button {
+            width: 100%;
+
+            margin-top: 18px;
+
+            padding: 16px;
+
+            border: none;
+            border-radius: 11px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #00d9ff,
+                    #006eff
+                );
+
+            color: #001018;
+
+            font-size: 12px;
+            font-weight: 900;
+
+            letter-spacing: 1px;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+        }
+
+        .scan-button:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 0 30px rgba(0, 217, 255, 0.25);
+        }
+
+        .scan-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.55;
+            transform: none;
+        }
+
+        /* ========================================
+           AI CORE
+        ======================================== */
+
+        .ai-panel {
+            padding: 25px;
+
+            border: 1px solid var(--border);
+            border-radius: 15px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(7, 17, 29, 0.96),
+                    rgba(4, 12, 21, 0.96)
+                );
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ai-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-panel-header h2 {
+            font-size: 15px;
+        }
+
+        .core-status {
+            color: var(--green);
+            font-size: 9px;
+        }
+
+        .core-container {
+            flex: 1;
+
+            min-height: 270px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .core {
+            position: relative;
+
+            width: 190px;
+            height: 190px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .core-ring {
+            position: absolute;
+            border-radius: 50%;
+
+            border: 1px solid rgba(0, 217, 255, 0.18);
+        }
+
+        .ring-one {
+            width: 190px;
+            height: 190px;
+
+            animation:
+                rotate 12s linear infinite;
+        }
+
+        .ring-two {
+            width: 145px;
+            height: 145px;
+
+            border-style: dashed;
+
+            animation:
+                rotateReverse 8s linear infinite;
+        }
+
+        .ring-three {
+            width: 105px;
+            height: 105px;
+
+            border-color:
+                rgba(0, 217, 255, 0.3);
+
+            animation:
+                pulseRing 2s ease-in-out infinite;
+        }
+
+        .core-center {
+            width: 70px;
+            height: 70px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(0, 217, 255, 0.35),
+                    rgba(0, 76, 140, 0.1)
+                );
+
+            border:
+                1px solid rgba(0, 217, 255, 0.5);
+
+            box-shadow:
+                0 0 35px rgba(0, 217, 255, 0.22);
+
+            color: var(--cyan);
+
+            font-size: 24px;
+
+            z-index: 3;
+        }
+
+        .core-label {
+            position: absolute;
+            bottom: -30px;
+
+            color: #526c80;
+
+            font-size: 9px;
+            letter-spacing: 2px;
+        }
+
+        @keyframes rotate {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes rotateReverse {
+            to {
+                transform: rotate(-360deg);
+            }
+        }
+
+        @keyframes pulseRing {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.12);
+                opacity: 1;
+            }
+        }
+
+        .engine-list {
+            margin-top: auto;
+
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            gap: 7px;
+        }
+
+        .engine {
+            padding: 9px;
+
+            border-radius: 8px;
+
+            background: rgba(0, 0, 0, 0.15);
+
+            border:
+                1px solid rgba(102, 133, 155, 0.08);
+        }
+
+        .engine-name {
+            color: #71899c;
+            font-size: 8px;
+        }
+
+        .engine-status {
+            margin-top: 4px;
+
+            color: var(--green);
+            font-size: 8px;
+        }
+
+        /* ========================================
+           ANALYSIS RESULT
+        ======================================== */
+
+        .result-panel {
+            margin-top: 20px;
+
+            padding: 25px;
+
+            border: 1px solid var(--border);
+            border-radius: 15px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(7, 17, 29, 0.96),
+                    rgba(4, 12, 21, 0.96)
+                );
+
+            display: none;
+        }
+
+        .result-panel.show {
+            display: block;
+            animation: resultAppear 0.4s ease;
+        }
+
+        @keyframes resultAppear {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 22px;
+        }
+
+        .result-header h2 {
+            font-size: 16px;
+        }
+
+        .result-time {
+            color: #4e687b;
+            font-size: 9px;
+        }
+
+        .result-main {
+            display: grid;
+
+            grid-template-columns:
+                210px
+                1fr;
+
+            gap: 25px;
+        }
+
+        .risk-card {
+            padding: 20px;
+
+            border:
+                1px solid rgba(255, 64, 88, 0.15);
+
+            border-radius: 13px;
+
+            background:
+                rgba(255, 64, 88, 0.025);
+
+            text-align: center;
+        }
+
+        .risk-circle {
+            width: 125px;
+            height: 125px;
+
+            margin: 0 auto 15px;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                conic-gradient(
+                    var(--red) 0deg,
+                    var(--red) 270deg,
+                    rgba(255,255,255,0.04) 270deg
+                );
+
+            position: relative;
+        }
+
+        .risk-circle::before {
+            content: "";
+
+            position: absolute;
+
+            width: 95px;
+            height: 95px;
+
+            border-radius: 50%;
+
+            background: #07111d;
+        }
+
+        .risk-score {
+            position: relative;
+            z-index: 2;
+
+            font-size: 25px;
+            font-weight: 900;
+
+            color: var(--red);
+        }
+
+        .risk-label {
+            color: var(--red);
+
+            font-size: 11px;
+            font-weight: bold;
+
+            letter-spacing: 1px;
+        }
+
+        .risk-description {
+            margin-top: 7px;
+
+            color: #647c8f;
+            font-size: 9px;
+            line-height: 1.5;
+        }
+
+        .indicators h3 {
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        .indicator {
+            display: flex;
+            gap: 10px;
+
+            padding: 11px;
+
+            margin-bottom: 7px;
+
+            border-radius: 8px;
+
+            background: rgba(0, 0, 0, 0.14);
+
+            border:
+                1px solid rgba(102, 133, 155, 0.07);
+        }
+
+        .indicator-icon {
+            color: var(--red);
+            font-size: 11px;
+        }
+
+        .indicator-content strong {
+            display: block;
+
+            color: #b9cad6;
+            font-size: 9px;
+        }
+
+        .indicator-content span {
+            display: block;
+
+            margin-top: 3px;
+
+            color: #526a7c;
+            font-size: 8px;
+            line-height: 1.4;
+        }
+
+        .recommendation {
+            margin-top: 15px;
+
+            padding: 14px;
+
+            border-radius: 10px;
+
+            border:
+                1px solid rgba(255, 216, 77, 0.12);
+
+            background:
+                rgba(255, 216, 77, 0.025);
+        }
+
+        .recommendation-title {
+            color: var(--yellow);
+
+            font-size: 9px;
+            font-weight: bold;
+        }
+
+        .recommendation-text {
+            margin-top: 6px;
+
+            color: #73899a;
+            font-size: 9px;
+            line-height: 1.5;
+        }
+
+        /* ========================================
+           SCANNING OVERLAY
+        ======================================== */
+
+        .scanner-overlay {
+            position: fixed;
+            inset: 0;
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            background:
+                rgba(1, 5, 10, 0.91);
+
+            z-index: 100;
+        }
+
+        .scanner-overlay.active {
+            display: flex;
+        }
+
+        .scan-box {
+            width: 420px;
+            max-width: 90%;
+
+            padding: 35px;
+
+            text-align: center;
+
+            border:
+                1px solid rgba(0, 217, 255, 0.2);
+
+            border-radius: 16px;
+
+            background:
+                #06101b;
+
+            box-shadow:
+                0 0 60px rgba(0, 217, 255, 0.08);
+        }
+
+        .scan-animation {
+            width: 90px;
+            height: 90px;
+
+            margin: 0 auto 25px;
+
+            border-radius: 50%;
+
+            border:
+                2px solid rgba(0, 217, 255, 0.15);
+
+            border-top-color:
+                var(--cyan);
+
+            animation:
+                spin 0.9s linear infinite;
+        }
+
+        .scan-box h2 {
+            color: var(--cyan);
+
+            font-size: 15px;
+
+            letter-spacing: 2px;
+        }
+
+        .scan-step {
+            margin-top: 10px;
+
+            color: #657d90;
+
+            font-size: 10px;
+        }
+
+        .progress {
+            width: 100%;
+            height: 4px;
+
+            margin-top: 20px;
+
+            background:
+                rgba(255, 255, 255, 0.05);
+
+            border-radius: 10px;
+
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #00d9ff,
+                    #006eff
+                );
+
+            transition: width 0.25s;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ========================================
+           RESPONSIVE
+        ======================================== */
+
+        @media (max-width: 1050px) {
+
+            .sidebar {
+                width: 210px;
+            }
+
+            .main {
+                width: calc(100% - 210px);
+                margin-left: 210px;
+            }
+
+            .modes {
+                grid-template-columns:
+                    repeat(3, 1fr);
+            }
+
+            .scanner-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ai-panel {
+                min-height: 400px;
+            }
+
+        }
+
+        @media (max-width: 750px) {
+
+            .sidebar {
+                position: relative;
+
+                width: 100%;
+                height: auto;
+
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .app {
+                display: block;
+            }
+
+            .main {
+                width: 100%;
+                margin-left: 0;
+                padding: 25px 18px;
+            }
+
+            .sidebar-status {
+                display: none;
+            }
+
+            .nav {
+                display: grid;
+                grid-template-columns:
+                    repeat(3, 1fr);
+            }
+
+            .brand {
+                padding-bottom: 15px;
+            }
+
+            .result-main {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 500px) {
+
+            .modes {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .system-pill {
+                display: none;
+            }
+
+            .input-panel,
+            .ai-panel,
+            .mode-panel,
+            .result-panel {
+                padding: 18px;
+            }
+
+            textarea {
+                min-height: 200px;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <canvas id="particles"></canvas>
+
+    <div class="background-glow"></div>
+
+
+    <div class="app">
+
+
+        <!-- =====================================
+             SIDEBAR
+        ====================================== -->
+
+        <aside class="sidebar">
+
+            <div class="brand">
+
+                <div class="brand-logo">
+                    S
+                </div>
+
+                <div>
+                    <div class="brand-name">
+                        SCAMSHIELD
+                    </div>
+
+                    <div class="brand-subtitle">
+                        AI SECURITY
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="menu-title">
+                SECURITY CONSOLE
+            </div>
+
+
+            <nav class="nav">
+
+                <a
+                    href="dashboard.html"
+                    class="nav-item"
+                >
+                    <span class="nav-icon">⌂</span>
+                    Dashboard
+                </a>
+
+
+                <a
+                    href="ai-scanner.html"
+                    class="nav-item active"
+                >
+                    <span class="nav-icon">◈</span>
+                    AI Scanner
+                </a>
+
+
+                <a
+                    href="threat-analysis.html"
+                    class="nav-item"
+                >
+                    <span class="nav-icon">⚠</span>
+                    Threat Analysis
+                </a>
+
+
+                <a
+                    href="history.html"
+                    class="nav-item"
+                >
+                    <span class="nav-icon">◷</span>
+                    Scan History
+                </a>
+
+
+                <a
+                    href="analytics.html"
+                    class="nav-item"
+                >
+                    <span class="nav-icon">◒</span>
+                    Analytics
+                </a>
+
+
+                <div class="menu-title">
+                    SYSTEM
+                </div>
+
+
+                <a
+                    href="settings.html"
+                    class="nav-item"
+                >
+                    <span class="nav-icon">⚙</span>
+                    Settings
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-status">
+
+                <div class="online">
+
+                    <span class="online-dot"></span>
+
+                    AI CORE ONLINE
+
+                </div>
+
+                <div class="system-text">
+                    Detection engines operational
+                </div>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =====================================
+             MAIN
+        ====================================== -->
+
+        <main class="main">
+
+
+            <!-- TOP BAR -->
+
+            <header class="topbar">
+
+                <div class="page-title">
+
+                    <h1>
+                        AI Threat Scanner
+                    </h1>
+
+                    <p>
+                        Analyze suspicious digital content using SCAMSHIELD intelligence.
+                    </p>
+
+                </div>
+
+
+                <div class="top-actions">
+
+                    <div class="system-pill">
+
+                        <span class="system-pill-dot"></span>
+
+                        SYSTEM OPERATIONAL
+
+                    </div>
+
+                    <div class="profile">
+                        AD
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- =================================
+                 SCAN MODE
+            ================================== -->
+
+            <section class="mode-panel">
+
+                <div class="section-label">
+                    SELECT ANALYSIS TYPE
+                </div>
+
+
+                <div class="modes">
+
+                    <div
+                        class="mode active"
+                        data-mode="message"
+                    >
+
+                        <div class="mode-icon">
+                            ✉
+                        </div>
+
+                        <div class="mode-name">
+                            MESSAGE
+                        </div>
+
+                        <div class="mode-description">
+                            SMS / Chat
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="mode"
+                        data-mode="url"
+                    >
+
+                        <div class="mode-icon">
+                            🔗
+                        </div>
+
+                        <div class="mode-name">
+                            URL
+                        </div>
+
+                        <div class="mode-description">
+                            Website link
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="mode"
+                        data-mode="phone"
+                    >
+
+                        <div class="mode-icon">
+                            ☎
+                        </div>
+
+                        <div class="mode-name">
+                            PHONE
+                        </div>
+
+                        <div class="mode-description">
+                            Phone number
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="mode"
+                        data-mode="email"
+                    >
+
+                        <div class="mode-icon">
+                            @
+                        </div>
+
+                        <div class="mode-name">
+                            EMAIL
+                        </div>
+
+                        <div class="mode-description">
+                            Email content
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="mode"
+                        data-mode="upi"
+                    >
+
+                        <div class="mode-icon">
+                            ₹
+                        </div>
+
+                        <div class="mode-name">
+                            UPI
+                        </div>
+
+                        <div class="mode-description">
+                            Payment details
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================
+                 SCANNER
+            ================================== -->
+
+            <section class="scanner-grid">
+
+
+                <!-- INPUT -->
+
+                <div class="input-panel">
+
+                    <div class="input-header">
+
+                        <h2 id="inputTitle">
+                            Message Analysis
+                        </h2>
+
+                        <div class="ai-badge">
+                            AI POWERED
+                        </div>
+
+                    </div>
+
+
+                    <div class="input-area">
+
+                        <textarea
+                            id="scanInput"
+                            placeholder="Paste a suspicious message here...
+
+Example:
+Congratulations! You have won ₹50,000.
+Click this link immediately to claim your reward."
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="input-footer">
+
+                        <span
+                            class="character-count"
+                            id="characterCount"
+                        >
+                            0 characters
+                        </span>
+
+
+                        <button
+                            class="clear-button"
+                            id="clearButton"
+                        >
+                            CLEAR INPUT
+                        </button>
+
+                    </div>
+
+
+                    <button
+                        class="scan-button"
+                        id="scanButton"
+                    >
+                        ◈ RUN AI ANALYSIS
+                    </button>
+
+                </div>
+
+
+                <!-- AI CORE -->
+
+                <div class="ai-panel">
+
+                    <div class="ai-panel-header">
+
+                        <h2>
+                            AI Core
+                        </h2>
+
+                        <span class="core-status">
+                            ● ONLINE
+                        </span>
+
+                    </div>
+
+
+                    <div class="core-container">
+
+                        <div class="core">
+
+                            <div
+                                class="core-ring ring-one"
+                            ></div>
+
+                            <div
+                                class="core-ring ring-two"
+                            ></div>
+
+                            <div
+                                class="core-ring ring-three"
+                            ></div>
+
+                            <div class="core-center">
+                                AI
+                            </div>
+
+                            <div class="core-label">
+                                THREAT INTELLIGENCE
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="engine-list">
+
+                        <div class="engine">
+
+                            <div class="engine-name">
+                                PATTERN ENGINE
+                            </div>
+
+                            <div class="engine-status">
+                                ● READY
+                            </div>
+
+                        </div>
+
+
+                        <div class="engine">
+
+                            <div class="engine-name">
+                                BEHAVIOR ENGINE
+                            </div>
+
+                            <div class="engine-status">
+                                ● READY
+                            </div>
+
+                        </div>
+
+
+                        <div class="engine">
+
+                            <div class="engine-name">
+                                URL INTELLIGENCE
+                            </div>
+
+                            <div class="engine-status">
+                                ● READY
+                            </div>
+
+                        </div>
+
+
+                        <div class="engine">
+
+                            <div class="engine-name">
+                                THREAT MODEL
+                            </div>
+
+                            <div class="engine-status">
+                                ● READY
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================
+                 RESULT
+            ================================== -->
+
+            <section
+                class="result-panel"
+                id="resultPanel"
+            >
+
+                <div class="result-header">
+
+                    <h2>
+                        AI Analysis Result
+                    </h2>
+
+                    <span
+                        class="result-time"
+                        id="resultTime"
+                    >
+                    </span>
+
+                </div>
+
+
+                <div class="result-main">
+
+
+                    <!-- RISK -->
+
+                    <div class="risk-card">
+
+                        <div class="risk-circle">
+
+                            <span
+                                class="risk-score"
+                                id="riskScore"
+                            >
+                                87
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="risk-label"
+                            id="riskLabel"
+                        >
+                            HIGH RISK
+                        </div>
+
+
+                        <div class="risk-description">
+                            Multiple suspicious indicators detected.
+                        </div>
+
+                    </div>
+
+
+                    <!-- INDICATORS -->
+
+                    <div class="indicators">
+
+                        <h3>
+                            DETECTED INDICATORS
+                        </h3>
+
+
+                        <div class="indicator">
+
+                            <div class="indicator-icon">
+                                ⚠
+                            </div>
+
+                            <div class="indicator-content">
+
+                                <strong>
+                                    Urgency Manipulation
+                                </strong>
+
+                                <span>
+                                    The content attempts to pressure the user into taking immediate action.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="indicator">
+
+                            <div class="indicator-icon">
+                                ⚠
+                            </div>
+
+                            <div class="indicator-content">
+
+                                <strong>
+                                    Suspicious Reward Claim
+                                </strong>
+
+                                <span>
+                                    Unexpected financial rewards are commonly used in social engineering attacks.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="indicator">
+
+                            <div class="indicator-icon">
+                                ⚠
+                            </div>
+
+                            <div class="indicator-content">
+
+                                <strong>
+                                    External Link Detected
+                                </strong>
+
+                                <span>
+                                    The message contains a link that may redirect the user to an untrusted destination.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="recommendation">
+
+                            <div class="recommendation-title">
+                                🛡 SECURITY RECOMMENDATION
+                            </div>
+
+                            <div class="recommendation-text">
+                                Do not click unknown links or share OTP,
+                                passwords, PINs or banking information.
+                                Verify the sender through an official channel.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+        </main>
+
+    </div>
+
+
+    <!-- =========================================
+         SCANNING OVERLAY
+    ========================================== -->
+
+    <div
+        class="scanner-overlay"
+        id="scannerOverlay"
+    >
+
+        <div class="scan-box">
+
+            <div class="scan-animation"></div>
+
+            <h2>
+                AI ANALYSIS RUNNING
+            </h2>
+
+            <div
+                class="scan-step"
+                id="scanStep"
+            >
+                Initializing detection engine...
+            </div>
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar"
+                    id="progressBar"
+                ></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        /* ==========================================
+           ELEMENTS
+        ========================================== */
+
+        const modes =
+            document.querySelectorAll(".mode");
+
+        const input =
+            document.getElementById("scanInput");
+
+        const inputTitle =
+            document.getElementById("inputTitle");
+
+        const count =
+            document.getElementById("characterCount");
+
+        const clearButton =
+            document.getElementById("clearButton");
+
+        const scanButton =
+            document.getElementById("scanButton");
+
+        const resultPanel =
+            document.getElementById("resultPanel");
+
+        const overlay =
+            document.getElementById("scannerOverlay");
+
+        const scanStep =
+            document.getElementById("scanStep");
+
+        const progressBar =
+            document.getElementById("progressBar");
+
+        const riskScore =
+            document.getElementById("riskScore");
+
+        const riskLabel =
+            document.getElementById("riskLabel");
+
+        const resultTime =
+            document.getElementById("resultTime");
+
+
+        let currentMode = "message";
+
+
+        /* ==========================================
+           MODE CONFIGURATION
+        ========================================== */
+
+        const modeConfig = {
+
+            message: {
+
+                title: "Message Analysis",
+
+                placeholder:
+                    "Paste a suspicious message here...\n\nExample:\nCongratulations! You have won ₹50,000.\nClick this link immediately to claim your reward."
+
+            },
+
+
+            url: {
+
+                title: "URL Analysis",
+
+                placeholder:
+                    "Paste the suspicious URL here...\n\nExample:\nhttps://example-security-verification.com/login"
+
+            },
+
+
+            phone: {
+
+                title: "Phone Number Analysis",
+
+                placeholder:
+                    "Enter the suspicious phone number here...\n\nExample:\n+91 98765 43210"
+
+            },
+
+
+            email: {
+
+                title: "Email Analysis",
+
+                placeholder:
+                    "Paste the suspicious email content here...\n\nInclude sender, subject and message body."
+
+            },
+
+
+            upi: {
+
+                title: "UPI / Payment Analysis",
+
+                placeholder:
+                    "Paste UPI ID, payment message or transaction information here...\n\nExample:\nPayment request received from unknown@upi"
+
+            }
+
+        };
+
+
+        /* ==========================================
+           MODE CLICK
+        ========================================== */
+
+        modes.forEach(function(mode) {
+
+            mode.addEventListener(
+                "click",
+                function() {
+
+                    modes.forEach(function(item) {
+
+                        item.classList.remove(
+                            "active"
+                        );
+
+                    });
+
+
+                    mode.classList.add(
+                        "active"
+                    );
+
+
+                    currentMode =
+                        mode.dataset.mode;
+
+
+                    inputTitle.textContent =
+                        modeConfig[
+                            currentMode
+                        ].title;
+
+
+                    input.placeholder =
+                        modeConfig[
+                            currentMode
+                        ].placeholder;
+
+
+                    input.value = "";
+
+                    updateCharacterCount();
+
+
+                    resultPanel.classList.remove(
+                        "show"
+                    );
+
+                }
+            );
+
+        });
+
+
+        /* ==========================================
+           CHARACTER COUNT
+        ========================================== */
+
+        function updateCharacterCount() {
+
+            const length =
+                input.value.length;
+
+
+            count.textContent =
+                length + " characters";
+
+        }
+
+
+        input.addEventListener(
+            "input",
+            updateCharacterCount
+        );
+
+
+        /* ==========================================
+           CLEAR
+        ========================================== */
+
+        clearButton.addEventListener(
+            "click",
+            function() {
+
+                input.value = "";
+
+                updateCharacterCount();
+
+                input.focus();
+
+                resultPanel.classList.remove(
+                    "show"
+                );
+
+            }
+        );
+
+
+        /* ==========================================
+           SIMPLE FRONTEND ANALYSIS
+           DEMO ONLY
+        ========================================== */
+
+        function calculateRisk(text) {
+
+            const lower =
+                text.toLowerCase();
+
+
+            let score = 12;
+
+
+            const indicators = [
+
+                "urgent",
+                "immediately",
+                "click",
+                "verify",
+                "winner",
+                "won",
+                "reward",
+                "prize",
+                "otp",
+                "password",
+                "account",
+                "blocked",
+                "suspended",
+                "refund",
+                "cashback",
+                "claim",
+                "bank",
+                "upi",
+                "payment",
+                "limited time"
+
+            ];
+
+
+            indicators.forEach(
+                function(word) {
+
+                    if (
+                        lower.includes(word)
+                    ) {
+
+                        score += 5;
+
+                    }
+
+                }
+            );
+
+
+            if (
+                text.includes("http://") ||
+                text.includes("https://")
+            ) {
+
+                score += 15;
+
+            }
+
+
+            if (
+                lower.includes("@")
+            ) {
+
+                score += 5;
+
+            }
+
+
+            if (score > 97) {
+
+                score = 97;
+
+            }
+
+
+            return score;
+
+        }
+
+
+        /* ==========================================
+           RUN SCAN
+        ========================================== */
+
+        scanButton.addEventListener(
+            "click",
+            function() {
+
+                const text =
+                    input.value.trim();
+
+
+                if (!text) {
+
+                    input.focus();
+
+                    input.style.borderColor =
+                        "#ff4058";
+
+
+                    setTimeout(
+                        function() {
+
+                            input.style.borderColor =
+                                "";
+
+                        },
+                        1000
+                    );
+
+                    return;
+
+                }
+
+
+                scanButton.disabled = true;
+
+                overlay.classList.add(
+                    "active"
+                );
+
+
+                progressBar.style.width =
+                    "0%";
+
+
+                const steps = [
+
+                    "Initializing AI detection engine...",
+
+                    "Normalizing input data...",
+
+                    "Extracting suspicious patterns...",
+
+                    "Analyzing behavioral indicators...",
+
+                    "Comparing threat signals...",
+
+                    "Calculating risk probability...",
+
+                    "Generating security recommendation..."
+
+                ];
+
+
+                let stepIndex = 0;
+
+
+                const interval =
+                    setInterval(
+                        function() {
+
+                            const progress =
+                                Math.min(
+                                    100,
+                                    ((stepIndex + 1) /
+                                    steps.length) * 100
+                                );
+
+
+                            progressBar.style.width =
+                                progress + "%";
+
+
+                            scanStep.textContent =
+                                steps[stepIndex];
+
+
+                            stepIndex++;
+
+
+                            if (
+                                stepIndex >=
+                                steps.length
+                            ) {
+
+                                clearInterval(
+                                    interval
+                                );
+
+
+                                setTimeout(
+                                    function() {
+
+                                        finishScan(
+                                            text
+                                        );
+
+                                    },
+                                    500
+                                );
+
+                            }
+
+                        },
+                        450
+                    );
+
+            }
+        );
+
+
+        /* ==========================================
+           FINISH SCAN
+        ========================================== */
+
+        function finishScan(text) {
+
+            const score =
+                calculateRisk(text);
+
+
+            overlay.classList.remove(
+                "active"
+            );
+
+
+            scanButton.disabled =
+                false;
+
+
+            resultPanel.classList.add(
+                "show"
+            );
+
+
+            riskScore.textContent =
+                score;
+
+
+            let label;
+
+
+            if (score >= 70) {
+
+                label =
+                    "HIGH RISK";
+
+                riskLabel.style.color =
+                    "#ff4058";
+
+                riskScore.style.color =
+                    "#ff4058";
+
+            }
+
+            else if (score >= 40) {
+
+                label =
+                    "MEDIUM RISK";
+
+                riskLabel.style.color =
+                    "#ffd84d";
+
+                riskScore.style.color =
+                    "#ffd84d";
+
+            }
+
+            else {
+
+                label =
+                    "LOW RISK";
+
+                riskLabel.style.color =
+                    "#00ff91";
+
+                riskScore.style.color =
+                    "#00ff91";
+
+            }
+
+
+            riskLabel.textContent =
+                label;
+
+
+            resultTime.textContent =
+                "Analyzed just now";
+
+
+            resultPanel.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }
+
+
+        /* ==========================================
+           PARTICLE BACKGROUND
+        ========================================== */
+
+        const canvas =
+            document.getElementById(
+                "particles"
+            );
+
+        const ctx =
+            canvas.getContext("2d");
+
+
+        let particles = [];
+
+
+        function resizeCanvas() {
+
+            canvas.width =
+                window.innerWidth;
+
+            canvas.height =
+                window.innerHeight;
+
+        }
+
+
+        class Particle {
+
+            constructor() {
+
+                this.x =
+                    Math.random() *
+                    canvas.width;
+
+                this.y =
+                    Math.random() *
+                    canvas.height;
+
+                this.vx =
+                    (Math.random() - 0.5)
+                    * 0.25;
+
+                this.vy =
+                    (Math.random() - 0.5)
+                    * 0.25;
+
+                this.size =
+                    Math.random() * 1.4 + 0.4;
+
+            }
+
+
+            update() {
+
+                this.x += this.vx;
+                this.y += this.vy;
+
+
+                if (
+                    this.x < 0 ||
+                    this.x > canvas.width
+                ) {
+
+                    this.vx *= -1;
+
+                }
+
+
+                if (
+                    this.y < 0 ||
+                    this.y > canvas.height
+                ) {
+
+                    this.vy *= -1;
+
+                }
+
+            }
+
+
+            draw() {
+
+                ctx.beginPath();
+
+                ctx.arc(
+                    this.x,
+                    this.y,
+                    this.size,
+                    0,
+                    Math.PI * 2
+                );
+
+                ctx.fillStyle =
+                    "rgba(0,217,255,0.55)";
+
+                ctx.fill();
+
+            }
+
+        }
+
+
+        function createParticles() {
+
+            particles = [];
+
+
+            const amount =
+                Math.min(
+                    100,
+                    Math.floor(
+                        window.innerWidth / 13
+                    )
+                );
+
+
+            for (
+                let i = 0;
+                i < amount;
+                i++
+            ) {
+
+                particles.push(
+                    new Particle()
+                );
+
+            }
+
+        }
+
+
+        function connectParticles() {
+
+            for (
+                let i = 0;
+                i < particles.length;
+                i++
+            ) {
+
+                for (
+                    let j = i + 1;
+                    j < particles.length;
+                    j++
+                ) {
+
+                    const dx =
+                        particles[i].x -
+                        particles[j].x;
+
+                    const dy =
+                        particles[i].y -
+                        particles[j].y;
+
+                    const distance =
+                        Math.sqrt(
+                            dx * dx +
+                            dy * dy
+                        );
+
+
+                    if (
+                        distance < 125
+                    ) {
+
+                        const opacity =
+                            1 -
+                            distance / 125;
+
+
+                        ctx.beginPath();
+
+                        ctx.moveTo(
+                            particles[i].x,
+                            particles[i].y
+                        );
+
+                        ctx.lineTo(
+                            particles[j].x,
+                            particles[j].y
+                        );
+
+                        ctx.strokeStyle =
+                            `rgba(0,217,255,${opacity * 0.08})`;
+
+                        ctx.lineWidth = 1;
+
+                        ctx.stroke();
+
+                    }
+
+                }
+
+            }
+
+        }
+
+
+        function animate() {
+
+            ctx.clearRect(
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+
+            particles.forEach(
+                function(particle) {
+
+                    particle.update();
+                    particle.draw();
+
+                }
+            );
+
+
+            connectParticles();
+
+
+            requestAnimationFrame(
+                animate
+            );
+
+        }
+
+
+        window.addEventListener(
+            "resize",
+            function() {
+
+                resizeCanvas();
+                createParticles();
+
+            }
+        );
+
+
+        resizeCanvas();
+
+        createParticles();
+
+        animate();
+
+    </script>
+
+</body>
+</html>

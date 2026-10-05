@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SCAMSHIELD AI | Secure Login</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #02060d;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* =========================
+           BACKGROUND
+        ========================= */
+
+        #networkCanvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .background {
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(
+                    circle at 20% 20%,
+                    rgba(0, 217, 255, 0.12),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 80% 80%,
+                    rgba(0, 120, 255, 0.10),
+                    transparent 30%
+                );
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* =========================
+           MAIN CONTAINER
+        ========================= */
+
+        .page {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 1050px;
+            min-height: 620px;
+
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+
+            background: rgba(5, 12, 23, 0.82);
+            border: 1px solid rgba(0, 217, 255, 0.22);
+            border-radius: 24px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 0 40px rgba(0, 217, 255, 0.08),
+                inset 0 0 40px rgba(0, 217, 255, 0.02);
+
+            backdrop-filter: blur(20px);
+        }
+
+        /* =========================
+           LEFT SIDE
+        ========================= */
+
+        .left-panel {
+            position: relative;
+            padding: 55px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            border-right: 1px solid rgba(0, 217, 255, 0.12);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 45px;
+        }
+
+        .brand-logo {
+            width: 58px;
+            height: 58px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 16px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #00eaff,
+                    #006eff
+                );
+
+            color: #001018;
+
+            font-size: 26px;
+            font-weight: 900;
+
+            box-shadow:
+                0 0 25px rgba(0, 225, 255, 0.35);
+        }
+
+        .brand-text h1 {
+            font-size: 25px;
+            letter-spacing: 2px;
+        }
+
+        .brand-text span {
+            display: block;
+            margin-top: 5px;
+
+            color: #00d9ff;
+            font-size: 11px;
+            letter-spacing: 3px;
+        }
+
+        .hero-title {
+            font-size: clamp(38px, 5vw, 64px);
+            line-height: 1.05;
+
+            letter-spacing: -2px;
+
+            margin-bottom: 25px;
+        }
+
+        .hero-title span {
+            color: #00ddff;
+
+            text-shadow:
+                0 0 20px rgba(0, 221, 255, 0.45);
+        }
+
+        .hero-description {
+            max-width: 500px;
+
+            color: #8ea4b9;
+
+            font-size: 15px;
+            line-height: 1.8;
+
+            margin-bottom: 35px;
+        }
+
+        /* =========================
+           SECURITY FEATURES
+        ========================= */
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .feature {
+            padding: 15px;
+
+            border: 1px solid rgba(0, 217, 255, 0.1);
+            border-radius: 12px;
+
+            background: rgba(0, 217, 255, 0.025);
+        }
+
+        .feature-icon {
+            color: #00eaff;
+            font-size: 18px;
+            margin-bottom: 7px;
+        }
+
+        .feature-title {
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .feature-text {
+            color: #687d91;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        /* =========================
+           RIGHT SIDE
+        ========================= */
+
+        .right-panel {
+            padding: 55px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-header {
+            margin-bottom: 35px;
+        }
+
+        .login-header h2 {
+            font-size: 31px;
+            margin-bottom: 9px;
+        }
+
+        .login-header p {
+            color: #72889d;
+            font-size: 13px;
+        }
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+
+            color: #9bb0c3;
+
+            font-size: 12px;
+            font-weight: bold;
+
+            margin-bottom: 9px;
+
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: #4f7189;
+            font-size: 15px;
+
+            pointer-events: none;
+        }
+
+        input {
+            width: 100%;
+
+            padding: 15px 45px;
+
+            background: rgba(0, 8, 18, 0.75);
+
+            border: 1px solid rgba(112, 145, 170, 0.18);
+            border-radius: 11px;
+
+            outline: none;
+
+            color: white;
+
+            font-size: 13px;
+
+            transition: 0.3s;
+        }
+
+        input::placeholder {
+            color: #405366;
+        }
+
+        input:focus {
+            border-color: #00d9ff;
+
+            box-shadow:
+                0 0 0 3px rgba(0, 217, 255, 0.06),
+                0 0 20px rgba(0, 217, 255, 0.06);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            background: none;
+            border: none;
+
+            color: #557086;
+
+            cursor: pointer;
+
+            font-size: 14px;
+        }
+
+        .password-toggle:hover {
+            color: #00d9ff;
+        }
+
+        /* =========================
+           OPTIONS
+        ========================= */
+
+        .options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin: 5px 0 25px;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            color: #72889d;
+
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .remember input {
+            width: 14px;
+            height: 14px;
+            padding: 0;
+            accent-color: #00d9ff;
+        }
+
+        .forgot {
+            color: #00cfea;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        /* =========================
+           LOGIN BUTTON
+        ========================= */
+
+        .login-button {
+            width: 100%;
+
+            padding: 16px;
+
+            border: none;
+            border-radius: 11px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #00d9ff,
+                    #006eff
+                );
+
+            color: #001018;
+
+            font-size: 13px;
+            font-weight: 900;
+
+            letter-spacing: 1px;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+
+            box-shadow:
+                0 0 25px rgba(0, 217, 255, 0.15);
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 0 35px rgba(0, 217, 255, 0.35);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        .status {
+            min-height: 20px;
+
+            text-align: center;
+
+            margin-top: 18px;
+
+            font-size: 11px;
+
+            letter-spacing: 0.5px;
+        }
+
+        .status.error {
+            color: #ff5364;
+        }
+
+        .status.loading {
+            color: #00d9ff;
+        }
+
+        .status.success {
+            color: #00ff88;
+        }
+
+        /* =========================
+           SECURITY FOOTER
+        ========================= */
+
+        .security-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            gap: 7px;
+
+            margin-top: 30px;
+
+            color: #52697c;
+
+            font-size: 10px;
+        }
+
+        .security-dot {
+            width: 6px;
+            height: 6px;
+
+            background: #00ff88;
+
+            border-radius: 50%;
+
+            box-shadow:
+                0 0 8px #00ff88;
+        }
+
+        /* =========================
+           LOADING OVERLAY
+        ========================= */
+
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+
+            display: none;
+
+            justify-content: center;
+            align-items: center;
+
+            background: rgba(1, 5, 10, 0.94);
+
+            z-index: 100;
+        }
+
+        .loading-box {
+            text-align: center;
+        }
+
+        .loader {
+            width: 55px;
+            height: 55px;
+
+            border-radius: 50%;
+
+            border: 3px solid rgba(0, 217, 255, 0.15);
+            border-top-color: #00d9ff;
+
+            animation: spin 0.8s linear infinite;
+
+            margin: 0 auto 20px;
+        }
+
+        .loading-box h3 {
+            color: #00d9ff;
+            font-size: 15px;
+            letter-spacing: 2px;
+        }
+
+        .loading-box p {
+            margin-top: 8px;
+
+            color: #61778b;
+            font-size: 11px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 850px) {
+
+            body {
+                overflow: auto;
+            }
+
+            .page {
+                padding: 15px;
+            }
+
+            .login-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .left-panel {
+                display: none;
+            }
+
+            .right-panel {
+                padding: 40px 25px;
+            }
+        }
+
+        @media (max-width: 450px) {
+
+            .right-panel {
+                padding: 30px 20px;
+            }
+
+            .login-header h2 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         BACKGROUND
+    ========================= -->
+
+    <canvas id="networkCanvas"></canvas>
+
+    <div class="background"></div>
+
+
+    <!-- =========================
+         LOGIN PAGE
+    ========================= -->
+
+    <main class="page">
+
+        <section class="login-wrapper">
+
+            <!-- LEFT PANEL -->
+
+            <div class="left-panel">
+
+                <div class="brand">
+
+                    <div class="brand-logo">
+                        S
+                    </div>
+
+                    <div class="brand-text">
+                        <h1>SCAMSHIELD AI</h1>
+                        <span>INTELLIGENT THREAT DEFENSE</span>
+                    </div>
+
+                </div>
+
+
+                <h2 class="hero-title">
+                    Detect.
+                    <br>
+                    <span>Protect.</span>
+                    <br>
+                    Prevent.
+                </h2>
+
+
+                <p class="hero-description">
+                    An intelligent security platform designed to
+                    analyze suspicious messages, URLs, phone numbers,
+                    emails and digital transactions using advanced
+                    threat intelligence.
+                </p>
+
+
+                <div class="features">
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+                            ◈
+                        </div>
+
+                        <div class="feature-title">
+                            AI Threat Detection
+                        </div>
+
+                        <div class="feature-text">
+                            Intelligent pattern analysis
+                        </div>
+
+                    </div>
+
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+                            ◉
+                        </div>
+
+                        <div class="feature-title">
+                            Real-Time Analysis
+                        </div>
+
+                        <div class="feature-text">
+                            Instant security assessment
+                        </div>
+
+                    </div>
+
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+                            ⛨
+                        </div>
+
+                        <div class="feature-title">
+                            Threat Intelligence
+                        </div>
+
+                        <div class="feature-text">
+                            Multi-layer threat signals
+                        </div>
+
+                    </div>
+
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+                            ◆
+                        </div>
+
+                        <div class="feature-title">
+                            Secure Console
+                        </div>
+
+                        <div class="feature-text">
+                            Central security dashboard
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT PANEL -->
+
+            <div class="right-panel">
+
+                <div class="login-header">
+
+                    <h2>
+                        Welcome Back
+                    </h2>
+
+                    <p>
+                        Authenticate to access your security console.
+                    </p>
+
+                </div>
+
+
+                <form id="loginForm">
+
+                    <!-- EMAIL -->
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            EMAIL ADDRESS
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">
+                                @
+                            </span>
+
+                            <input
+                                type="email"
+                                id="email"
+                                placeholder="admin@scamshield.ai"
+                                autocomplete="email"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+
+                    <div class="form-group">
+
+                        <label for="password">
+                            PASSWORD
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">
+                                🔒
+                            </span>
+
+                            <input
+                                type="password"
+                                id="password"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                id="togglePassword"
+                            >
+                                SHOW
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- OPTIONS -->
+
+                    <div class="options">
+
+                        <label class="remember">
+
+                            <input
+                                type="checkbox"
+                                id="remember"
+                            >
+
+                            Remember me
+
+                        </label>
+
+
+                        <span
+                            class="forgot"
+                            id="forgotPassword"
+                        >
+                            Forgot password?
+                        </span>
+
+                    </div>
+
+
+                    <!-- LOGIN -->
+
+                    <button
+                        type="submit"
+                        class="login-button"
+                        id="loginButton"
+                    >
+                        ACCESS SECURITY CONSOLE
+                    </button>
+
+
+                    <!-- STATUS -->
+
+                    <div
+                        class="status"
+                        id="status"
+                    ></div>
+
+                </form>
+
+
+                <div class="security-info">
+
+                    <span class="security-dot"></span>
+
+                    SCAMSHIELD SECURE CONNECTION
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         LOADING SCREEN
+    ========================= -->
+
+    <div
+        class="loading-overlay"
+        id="loadingOverlay"
+    >
+
+        <div class="loading-box">
+
+            <div class="loader"></div>
+
+            <h3>
+                AUTHENTICATING
+            </h3>
+
+            <p>
+                Establishing secure connection...
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        /* ==========================================
+           ELEMENTS
+        ========================================== */
+
+        const loginForm =
+            document.getElementById("loginForm");
+
+        const emailInput =
+            document.getElementById("email");
+
+        const passwordInput =
+            document.getElementById("password");
+
+        const togglePassword =
+            document.getElementById("togglePassword");
+
+        const loginButton =
+            document.getElementById("loginButton");
+
+        const status =
+            document.getElementById("status");
+
+        const loadingOverlay =
+            document.getElementById("loadingOverlay");
+
+        const forgotPassword =
+            document.getElementById("forgotPassword");
+
+
+        /* ==========================================
+           PASSWORD SHOW / HIDE
+        ========================================== */
+
+        togglePassword.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    passwordInput.type === "password"
+                ) {
+
+                    passwordInput.type = "text";
+
+                    togglePassword.textContent =
+                        "HIDE";
+
+                } else {
+
+                    passwordInput.type =
+                        "password";
+
+                    togglePassword.textContent =
+                        "SHOW";
+                }
+
+            }
+        );
+
+
+        /* ==========================================
+           FORGOT PASSWORD
+        ========================================== */
+
+        forgotPassword.addEventListener(
+            "click",
+            function () {
+
+                status.textContent =
+                    "Password recovery module will be connected to the backend.";
+
+                status.className =
+                    "status loading";
+
+            }
+        );
+
+
+        /* ==========================================
+           LOGIN
+        ========================================== */
+
+        loginForm.addEventListener(
+            "submit",
+            function (event) {
+
+                event.preventDefault();
+
+
+                const email =
+                    emailInput.value.trim();
+
+                const password =
+                    passwordInput.value.trim();
+
+
+                /* BASIC VALIDATION */
+
+                if (email === "") {
+
+                    status.textContent =
+                        "Please enter your email address.";
+
+                    status.className =
+                        "status error";
+
+                    emailInput.focus();
+
+                    return;
+                }
+
+
+                if (password === "") {
+
+                    status.textContent =
+                        "Please enter your password.";
+
+                    status.className =
+                        "status error";
+
+                    passwordInput.focus();
+
+                    return;
+                }
+
+
+                /* EMAIL FORMAT CHECK */
+
+                const emailPattern =
+                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+                if (!emailPattern.test(email)) {
+
+                    status.textContent =
+                        "Please enter a valid email address.";
+
+                    status.className =
+                        "status error";
+
+                    emailInput.focus();
+
+                    return;
+                }
+
+
+                /* ==============================
+                   AUTHENTICATION START
+                ============================== */
+
+                loginButton.disabled = true;
+
+                loginButton.textContent =
+                    "AUTHENTICATING...";
+
+                status.textContent =
+                    "Verifying security credentials...";
+
+                status.className =
+                    "status loading";
+
+
+                loadingOverlay.style.display =
+                    "flex";
+
+
+                /* ==============================
+                   DEMO AUTHENTICATION
+                ============================== */
+
+                setTimeout(function () {
+
+                    status.textContent =
+                        "AUTHENTICATION SUCCESSFUL";
+
+                    status.className =
+                        "status success";
+
+
+                    loginButton.textContent =
+                        "ACCESS GRANTED";
+
+
+                    /*
+                       IMPORTANT:
+                       dashboard.html MUST be in
+                       the same folder as login.html.
+                    */
+
+                    setTimeout(function () {
+
+                        window.location.href =
+                            "dashboard.html";
+
+                    }, 800);
+
+
+                }, 1800);
+
+            }
+        );
+
+
+        /* ==========================================
+           NETWORK BACKGROUND
+        ========================================== */
+
+        const canvas =
+            document.getElementById(
+                "networkCanvas"
+            );
+
+        const ctx =
+            canvas.getContext("2d");
+
+
+        let particles = [];
+
+        let mouse = {
+            x: null,
+            y: null
+        };
+
+
+        function resizeCanvas() {
+
+            canvas.width =
+                window.innerWidth;
+
+            canvas.height =
+                window.innerHeight;
+
+        }
+
+
+        window.addEventListener(
+            "resize",
+            resizeCanvas
+        );
+
+
+        window.addEventListener(
+            "mousemove",
+            function (event) {
+
+                mouse.x =
+                    event.clientX;
+
+                mouse.y =
+                    event.clientY;
+
+            }
+        );
+
+
+        window.addEventListener(
+            "mouseout",
+            function () {
+
+                mouse.x = null;
+                mouse.y = null;
+
+            }
+        );
+
+
+        class Particle {
+
+            constructor() {
+
+                this.x =
+                    Math.random() *
+                    canvas.width;
+
+                this.y =
+                    Math.random() *
+                    canvas.height;
+
+                this.vx =
+                    (Math.random() - 0.5)
+                    * 0.35;
+
+                this.vy =
+                    (Math.random() - 0.5)
+                    * 0.35;
+
+                this.size =
+                    Math.random() * 1.7 + 0.5;
+
+            }
+
+
+            update() {
+
+                this.x += this.vx;
+                this.y += this.vy;
+
+
+                if (
+                    this.x < 0 ||
+                    this.x > canvas.width
+                ) {
+
+                    this.vx *= -1;
+
+                }
+
+
+                if (
+                    this.y < 0 ||
+                    this.y > canvas.height
+                ) {
+
+                    this.vy *= -1;
+
+                }
+
+
+                if (
+                    mouse.x !== null &&
+                    mouse.y !== null
+                ) {
+
+                    const dx =
+                        this.x - mouse.x;
+
+                    const dy =
+                        this.y - mouse.y;
+
+                    const distance =
+                        Math.sqrt(
+                            dx * dx +
+                            dy * dy
+                        );
+
+
+                    if (distance < 120) {
+
+                        this.x +=
+                            dx / distance * 0.3;
+
+                        this.y +=
+                            dy / distance * 0.3;
+
+                    }
+
+                }
+
+            }
+
+
+            draw() {
+
+                ctx.beginPath();
+
+                ctx.arc(
+                    this.x,
+                    this.y,
+                    this.size,
+                    0,
+                    Math.PI * 2
+                );
+
+                ctx.fillStyle =
+                    "rgba(0,217,255,0.65)";
+
+                ctx.fill();
+
+            }
+
+        }
+
+
+        function createParticles() {
+
+            particles = [];
+
+            const count =
+                Math.min(
+                    110,
+                    Math.floor(
+                        window.innerWidth / 12
+                    )
+                );
+
+
+            for (
+                let i = 0;
+                i < count;
+                i++
+            ) {
+
+                particles.push(
+                    new Particle()
+                );
+
+            }
+
+        }
+
+
+        function connectParticles() {
+
+            for (
+                let i = 0;
+                i < particles.length;
+                i++
+            ) {
+
+                for (
+                    let j = i + 1;
+                    j < particles.length;
+                    j++
+                ) {
+
+                    const dx =
+                        particles[i].x -
+                        particles[j].x;
+
+                    const dy =
+                        particles[i].y -
+                        particles[j].y;
+
+                    const distance =
+                        Math.sqrt(
+                            dx * dx +
+                            dy * dy
+                        );
+
+
+                    if (distance < 130) {
+
+                        const opacity =
+                            1 -
+                            distance / 130;
+
+
+                        ctx.beginPath();
+
+                        ctx.moveTo(
+                            particles[i].x,
+                            particles[i].y
+                        );
+
+                        ctx.lineTo(
+                            particles[j].x,
+                            particles[j].y
+                        );
+
+                        ctx.strokeStyle =
+                            `rgba(0,217,255,${opacity * 0.12})`;
+
+                        ctx.lineWidth = 1;
+
+                        ctx.stroke();
+
+                    }
+
+                }
+
+            }
+
+        }
+
+
+        function animateNetwork() {
+
+            ctx.clearRect(
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+
+            particles.forEach(
+                particle => {
+
+                    particle.update();
+                    particle.draw();
+
+                }
+            );
+
+
+            connectParticles();
+
+
+            requestAnimationFrame(
+                animateNetwork
+            );
+
+        }
+
+
+        resizeCanvas();
+
+        createParticles();
+
+        animateNetwork();
+
+    </script>
+
+</body>
+</html>

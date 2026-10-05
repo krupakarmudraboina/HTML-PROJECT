@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCAMSHIELD AI — Analytics</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#03070d;
+    color:#e8faff;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+/* BACKGROUND */
+#particles{
+    position:fixed;
+    inset:0;
+    z-index:-2;
+}
+
+.overlay{
+    position:fixed;
+    inset:0;
+    background:
+        radial-gradient(circle at 20% 20%,rgba(0,212,255,.08),transparent 30%),
+        radial-gradient(circle at 80% 80%,rgba(0,140,255,.06),transparent 30%);
+    z-index:-1;
+}
+
+/* SIDEBAR */
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:245px;
+    height:100vh;
+    background:rgba(3,10,18,.95);
+    border-right:1px solid rgba(0,220,255,.18);
+    padding:25px 15px;
+    z-index:10;
+}
+
+.logo{
+    text-align:center;
+    margin-bottom:35px;
+}
+
+.logo h1{
+    color:#00e5ff;
+    font-size:22px;
+    letter-spacing:2px;
+    text-shadow:0 0 15px #00e5ff;
+}
+
+.logo span{
+    display:block;
+    color:#6d8794;
+    font-size:9px;
+    letter-spacing:3px;
+    margin-top:6px;
+}
+
+.nav a{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    padding:14px 16px;
+    margin:7px 0;
+    color:#7895a2;
+    text-decoration:none;
+    border-radius:10px;
+    transition:.3s;
+    font-size:14px;
+}
+
+.nav a:hover{
+    background:rgba(0,229,255,.08);
+    color:#00e5ff;
+    box-shadow:inset 3px 0 #00e5ff;
+}
+
+.nav a.active{
+    background:linear-gradient(90deg,rgba(0,229,255,.15),rgba(0,229,255,.03));
+    color:#00e5ff;
+    box-shadow:inset 3px 0 #00e5ff;
+}
+
+.icon{
+    width:20px;
+    text-align:center;
+}
+
+.system{
+    position:absolute;
+    bottom:25px;
+    left:20px;
+    right:20px;
+    padding:15px;
+    border:1px solid rgba(0,229,255,.15);
+    border-radius:10px;
+    background:rgba(0,229,255,.03);
+}
+
+.system-title{
+    font-size:10px;
+    color:#5d7b88;
+    letter-spacing:2px;
+}
+
+.online{
+    margin-top:8px;
+    font-size:12px;
+    color:#48ff9b;
+}
+
+.dot{
+    display:inline-block;
+    width:7px;
+    height:7px;
+    background:#48ff9b;
+    border-radius:50%;
+    box-shadow:0 0 10px #48ff9b;
+    margin-right:6px;
+}
+
+/* MAIN */
+.main{
+    margin-left:245px;
+    padding:30px;
+}
+
+/* TOPBAR */
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+}
+
+.page-title h2{
+    font-size:27px;
+    letter-spacing:1px;
+}
+
+.page-title p{
+    margin-top:7px;
+    color:#69838e;
+    font-size:13px;
+}
+
+.status{
+    padding:10px 16px;
+    border:1px solid rgba(0,229,255,.2);
+    border-radius:20px;
+    color:#00e5ff;
+    font-size:11px;
+    letter-spacing:1px;
+    background:rgba(0,229,255,.04);
+}
+
+/* CARDS */
+.kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:22px;
+}
+
+.card{
+    background:rgba(7,17,27,.78);
+    border:1px solid rgba(0,220,255,.13);
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 10px 35px rgba(0,0,0,.25);
+}
+
+.kpi{
+    position:relative;
+    overflow:hidden;
+}
+
+.kpi::after{
+    content:"";
+    position:absolute;
+    width:90px;
+    height:90px;
+    right:-30px;
+    top:-30px;
+    border-radius:50%;
+    background:rgba(0,229,255,.05);
+}
+
+.kpi-label{
+    color:#6d8794;
+    font-size:11px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+}
+
+.kpi-value{
+    margin-top:12px;
+    font-size:29px;
+    font-weight:bold;
+    color:#e9fcff;
+}
+
+.kpi-change{
+    margin-top:8px;
+    font-size:11px;
+    color:#48ff9b;
+}
+
+.kpi-change.warning{
+    color:#ffc857;
+}
+
+/* CHART GRID */
+.chart-grid{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:20px;
+    margin-bottom:20px;
+}
+
+.card-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.card-header h3{
+    font-size:15px;
+    letter-spacing:.5px;
+}
+
+.card-header span{
+    font-size:10px;
+    color:#587581;
+}
+
+canvas{
+    width:100%;
+    height:260px;
+}
+
+/* DONUT */
+.donut-wrap{
+    height:260px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+}
+
+.donut{
+    width:190px;
+    height:190px;
+    border-radius:50%;
+    background:
+        conic-gradient(
+            #00e5ff 0deg 170deg,
+            #3878ff 170deg 270deg,
+            #a855f7 270deg 320deg,
+            #ff5577 320deg 360deg
+        );
+    position:relative;
+    box-shadow:0 0 30px rgba(0,229,255,.1);
+}
+
+.donut::after{
+    content:"";
+    position:absolute;
+    width:120px;
+    height:120px;
+    background:#07111b;
+    border-radius:50%;
+    top:35px;
+    left:35px;
+}
+
+.donut-center{
+    position:absolute;
+    z-index:2;
+    text-align:center;
+}
+
+.donut-center strong{
+    font-size:25px;
+}
+
+.donut-center small{
+    display:block;
+    color:#67818d;
+    font-size:9px;
+    margin-top:4px;
+}
+
+.legend{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:10px;
+}
+
+.legend-item{
+    font-size:10px;
+    color:#77909b;
+}
+
+.legend-color{
+    display:inline-block;
+    width:8px;
+    height:8px;
+    border-radius:2px;
+    margin-right:6px;
+}
+
+.cyan{background:#00e5ff;}
+.blue{background:#3878ff;}
+.purple{background:#a855f7;}
+.red{background:#ff5577;}
+
+/* LOWER GRID */
+.lower-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.metric{
+    margin-bottom:18px;
+}
+
+.metric-top{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:7px;
+    font-size:11px;
+}
+
+.metric-top span:first-child{
+    color:#91aab4;
+}
+
+.metric-top span:last-child{
+    color:#00e5ff;
+}
+
+.bar{
+    height:7px;
+    border-radius:10px;
+    background:#0b1b27;
+    overflow:hidden;
+}
+
+.fill{
+    height:100%;
+    border-radius:10px;
+    background:linear-gradient(90deg,#006dff,#00e5ff);
+    box-shadow:0 0 12px rgba(0,229,255,.4);
+}
+
+/* AI PERFORMANCE */
+.performance{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+}
+
+.performance-box{
+    text-align:center;
+    padding:18px 10px;
+    background:rgba(0,229,255,.025);
+    border:1px solid rgba(0,229,255,.08);
+    border-radius:10px;
+}
+
+.performance-box strong{
+    display:block;
+    font-size:24px;
+    color:#00e5ff;
+}
+
+.performance-box span{
+    display:block;
+    margin-top:7px;
+    color:#68828d;
+    font-size:9px;
+    letter-spacing:1px;
+}
+
+/* SCAN TYPES */
+.scan-type{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:13px 0;
+    border-bottom:1px solid rgba(255,255,255,.04);
+}
+
+.scan-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.scan-icon{
+    width:32px;
+    height:32px;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,229,255,.06);
+    color:#00e5ff;
+}
+
+.scan-name{
+    font-size:12px;
+}
+
+.scan-count{
+    color:#00e5ff;
+    font-size:12px;
+}
+
+/* FOOTER */
+.footer{
+    margin-top:25px;
+    text-align:center;
+    color:#405863;
+    font-size:9px;
+    letter-spacing:1px;
+}
+
+/* RESPONSIVE */
+@media(max-width:1100px){
+    .kpi-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .chart-grid,
+    .lower-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:750px){
+    .sidebar{
+        width:70px;
+        padding:20px 8px;
+    }
+
+    .logo h1{
+        font-size:10px;
+    }
+
+    .logo span,
+    .nav a span,
+    .system{
+        display:none;
+    }
+
+    .nav a{
+        justify-content:center;
+        padding:13px 5px;
+    }
+
+    .main{
+        margin-left:70px;
+        padding:20px 15px;
+    }
+
+    .topbar{
+        align-items:flex-start;
+        gap:10px;
+    }
+
+    .page-title h2{
+        font-size:21px;
+    }
+
+    .kpi-grid{
+        grid-template-columns:1fr;
+    }
+
+    .performance{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="particles"></canvas>
+<div class="overlay"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+    <div class="logo">
+        <h1>SCAMSHIELD AI</h1>
+        <span>CYBER THREAT INTELLIGENCE</span>
+    </div>
+
+    <nav class="nav">
+
+        <a href="dashboard.html">
+            <div class="icon">⌂</div>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="ai-scanner.html">
+            <div class="icon">⌁</div>
+            <span>AI Scanner</span>
+        </a>
+
+        <a href="threat-analysis.html">
+            <div class="icon">⚠</div>
+            <span>Threat Analysis</span>
+        </a>
+
+        <a href="history.html">
+            <div class="icon">◷</div>
+            <span>Scan History</span>
+        </a>
+
+        <a href="analytics.html" class="active">
+            <div class="icon">▥</div>
+            <span>Analytics</span>
+        </a>
+
+        <a href="settings.html">
+            <div class="icon">⚙</div>
+            <span>Settings</span>
+        </a>
+
+    </nav>
+
+    <div class="system">
+        <div class="system-title">SYSTEM STATUS</div>
+        <div class="online">
+            <span class="dot"></span>ALL SYSTEMS OPERATIONAL
+        </div>
+    </div>
+
+</aside>
+
+
+<!-- MAIN -->
+<main class="main">
+
+    <div class="topbar">
+
+        <div class="page-title">
+            <h2>Security Analytics</h2>
+            <p>AI-powered threat detection performance and security intelligence</p>
+        </div>
+
+        <div class="status">
+            ● LIVE ANALYTICS
+        </div>
+
+    </div>
+
+
+    <!-- KPI -->
+    <section class="kpi-grid">
+
+        <div class="card kpi">
+            <div class="kpi-label">Total Scans</div>
+            <div class="kpi-value">1,284</div>
+            <div class="kpi-change">↑ 18.6% this month</div>
+        </div>
+
+        <div class="card kpi">
+            <div class="kpi-label">Threat Detection Rate</div>
+            <div class="kpi-value">94.7%</div>
+            <div class="kpi-change">↑ 3.2% improvement</div>
+        </div>
+
+        <div class="card kpi">
+            <div class="kpi-label">Average Risk Score</div>
+            <div class="kpi-value">42.8</div>
+            <div class="kpi-change warning">↓ 6.4% risk reduction</div>
+        </div>
+
+        <div class="card kpi">
+            <div class="kpi-label">Protection Rate</div>
+            <div class="kpi-value">97.2%</div>
+            <div class="kpi-change">↑ 1.8% improvement</div>
+        </div>
+
+    </section>
+
+
+    <!-- CHARTS -->
+    <section class="chart-grid">
+
+        <div class="card">
+
+            <div class="card-header">
+                <h3>Threat Detection Trend</h3>
+                <span>LAST 7 DAYS</span>
+            </div>
+
+            <canvas id="trendChart"></canvas>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-header">
+                <h3>Threat Distribution</h3>
+                <span>ALL SCANS</span>
+            </div>
+
+            <div class="donut-wrap">
+
+                <div class="donut"></div>
+
+                <div class="donut-center">
+                    <strong>1,284</strong>
+                    <small>TOTAL SCANS</small>
+                </div>
+
+            </div>
+
+            <div class="legend">
+
+                <div class="legend-item">
+                    <span class="legend-color cyan"></span>
+                    Phishing
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-color blue"></span>
+                    Social Engineering
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-color purple"></span>
+                    Financial Fraud
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-color red"></span>
+                    Other Threats
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- LOWER -->
+    <section class="lower-grid">
+
+        <!-- DETECTION CATEGORIES -->
+        <div class="card">
+
+            <div class="card-header">
+                <h3>Threat Category Detection</h3>
+                <span>AI CLASSIFICATION</span>
+            </div>
+
+            <div class="metric">
+
+                <div class="metric-top">
+                    <span>Phishing</span>
+                    <span>94%</span>
+                </div>
+
+                <div class="bar">
+                    <div class="fill" style="width:94%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="metric">
+
+                <div class="metric-top">
+                    <span>Social Engineering</span>
+                    <span>89%</span>
+                </div>
+
+                <div class="bar">
+                    <div class="fill" style="width:89%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="metric">
+
+                <div class="metric-top">
+                    <span>Financial Fraud</span>
+                    <span>86%</span>
+                </div>
+
+                <div class="bar">
+                    <div class="fill" style="width:86%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="metric">
+
+                <div class="metric-top">
+                    <span>Malicious Redirect</span>
+                    <span>78%</span>
+                </div>
+
+                <div class="bar">
+                    <div class="fill" style="width:78%"></div>
+                </div>
+
+            </div>
+
+
+            <div class="metric">
+
+                <div class="metric-top">
+                    <span>Identity Theft</span>
+                    <span>71%</span>
+                </div>
+
+                <div class="bar">
+                    <div class="fill" style="width:71%"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SCAN TYPES -->
+        <div class="card">
+
+            <div class="card-header">
+                <h3>Scan Type Distribution</h3>
+                <span>RECENT ACTIVITY</span>
+            </div>
+
+
+            <div class="scan-type">
+
+                <div class="scan-left">
+                    <div class="scan-icon">✉</div>
+
+                    <div class="scan-name">
+                        Email Analysis
+                    </div>
+                </div>
+
+                <div class="scan-count">342</div>
+
+            </div>
+
+
+            <div class="scan-type">
+
+                <div class="scan-left">
+                    <div class="scan-icon">🔗</div>
+
+                    <div class="scan-name">
+                        URL Scanning
+                    </div>
+                </div>
+
+                <div class="scan-count">296</div>
+
+            </div>
+
+
+            <div class="scan-type">
+
+                <div class="scan-left">
+                    <div class="scan-icon">▣</div>
+
+                    <div class="scan-name">
+                        Message Analysis
+                    </div>
+                </div>
+
+                <div class="scan-count">281</div>
+
+            </div>
+
+
+            <div class="scan-type">
+
+                <div class="scan-left">
+                    <div class="scan-icon">☎</div>
+
+                    <div class="scan-name">
+                        Phone Analysis
+                    </div>
+                </div>
+
+                <div class="scan-count">198</div>
+
+            </div>
+
+
+            <div class="scan-type">
+
+                <div class="scan-left">
+                    <div class="scan-icon">₹</div>
+
+                    <div class="scan-name">
+                        UPI Analysis
+                    </div>
+                </div>
+
+                <div class="scan-count">167</div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- AI PERFORMANCE -->
+    <section class="card" style="margin-top:20px;">
+
+        <div class="card-header">
+            <h3>AI Detection Engine Performance</h3>
+            <span>PROTOTYPE METRICS</span>
+        </div>
+
+        <div class="performance">
+
+            <div class="performance-box">
+                <strong>94.7%</strong>
+                <span>ACCURACY</span>
+            </div>
+
+            <div class="performance-box">
+                <strong>92.3%</strong>
+                <span>PRECISION</span>
+            </div>
+
+            <div class="performance-box">
+                <strong>91.8%</strong>
+                <span>RECALL</span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <div class="footer">
+        SCAMSHIELD AI • SECURITY ANALYTICS CONSOLE • PROTOTYPE ENVIRONMENT
+    </div>
+
+</main>
+
+
+<script>
+
+/* PARTICLE NETWORK */
+const particleCanvas = document.getElementById("particles");
+const pctx = particleCanvas.getContext("2d");
+
+let particles = [];
+
+function resizeParticles(){
+
+    particleCanvas.width = window.innerWidth;
+    particleCanvas.height = window.innerHeight;
+
+}
+
+resizeParticles();
+
+window.addEventListener("resize", resizeParticles);
+
+
+for(let i=0;i<75;i++){
+
+    particles.push({
+        x:Math.random()*window.innerWidth,
+        y:Math.random()*window.innerHeight,
+        vx:(Math.random()-.5)*.35,
+        vy:(Math.random()-.5)*.35,
+        size:Math.random()*1.5+.5
+    });
+
+}
+
+
+function drawParticles(){
+
+    pctx.clearRect(
+        0,
+        0,
+        particleCanvas.width,
+        particleCanvas.height
+    );
+
+    particles.forEach(p=>{
+
+        p.x+=p.vx;
+        p.y+=p.vy;
+
+        if(p.x<0 || p.x>particleCanvas.width)
+            p.vx*=-1;
+
+        if(p.y<0 || p.y>particleCanvas.height)
+            p.vy*=-1;
+
+        pctx.beginPath();
+
+        pctx.arc(
+            p.x,
+            p.y,
+            p.size,
+            0,
+            Math.PI*2
+        );
+
+        pctx.fillStyle="rgba(0,220,255,.45)";
+        pctx.fill();
+
+    });
+
+
+    for(let i=0;i<particles.length;i++){
+
+        for(let j=i+1;j<particles.length;j++){
+
+            let dx=particles[i].x-particles[j].x;
+            let dy=particles[i].y-particles[j].y;
+
+            let distance=Math.sqrt(dx*dx+dy*dy);
+
+            if(distance<110){
+
+                pctx.beginPath();
+
+                pctx.moveTo(
+                    particles[i].x,
+                    particles[i].y
+                );
+
+                pctx.lineTo(
+                    particles[j].x,
+                    particles[j].y
+                );
+
+                pctx.strokeStyle=
+                    `rgba(0,190,255,${.08*(1-distance/110)})`;
+
+                pctx.stroke();
+
+            }
+
+        }
+
+    }
+
+    requestAnimationFrame(drawParticles);
+
+}
+
+drawParticles();
+
+
+/* TREND CHART */
+
+const chart = document.getElementById("trendChart");
+const ctx = chart.getContext("2d");
+
+function drawChart(){
+
+    const rect=chart.getBoundingClientRect();
+
+    chart.width=rect.width*window.devicePixelRatio;
+    chart.height=260*window.devicePixelRatio;
+
+    ctx.scale(
+        window.devicePixelRatio,
+        window.devicePixelRatio
+    );
+
+    const width=rect.width;
+    const height=260;
+
+    ctx.clearRect(0,0,width,height);
+
+    const values=[38,52,47,71,64,82,94];
+
+    const labels=[
+        "MON",
+        "TUE",
+        "WED",
+        "THU",
+        "FRI",
+        "SAT",
+        "SUN"
+    ];
+
+    const padding=35;
+
+    /* GRID */
+
+    ctx.strokeStyle="rgba(255,255,255,.05)";
+    ctx.lineWidth=1;
+
+    for(let i=0;i<5;i++){
+
+        const y=35+i*45;
+
+        ctx.beginPath();
+        ctx.moveTo(padding,y);
+        ctx.lineTo(width-10,y);
+        ctx.stroke();
+
+    }
+
+
+    /* LINE */
+
+    const points=[];
+
+    values.forEach((value,index)=>{
+
+        const x=
+            padding+
+            index*((width-padding-15)/(values.length-1));
+
+        const y=
+            225-
+            ((value/100)*170);
+
+        points.push({x,y});
+
+    });
+
+
+    /* AREA */
+
+    ctx.beginPath();
+
+    ctx.moveTo(points[0].x,225);
+
+    points.forEach(point=>{
+        ctx.lineTo(point.x,point.y);
+    });
+
+    ctx.lineTo(points[points.length-1].x,225);
+
+    ctx.closePath();
+
+    const gradient=
+        ctx.createLinearGradient(0,40,0,225);
+
+    gradient.addColorStop(
+        0,
+        "rgba(0,229,255,.22)"
+    );
+
+    gradient.addColorStop(
+        1,
+        "rgba(0,229,255,0)"
+    );
+
+    ctx.fillStyle=gradient;
+    ctx.fill();
+
+
+    /* LINE */
+
+    ctx.beginPath();
+
+    points.forEach((point,index)=>{
+
+        if(index===0)
+            ctx.moveTo(point.x,point.y);
+        else
+            ctx.lineTo(point.x,point.y);
+
+    });
+
+    ctx.strokeStyle="#00e5ff";
+    ctx.lineWidth=2;
+    ctx.shadowBlur=10;
+    ctx.shadowColor="#00e5ff";
+    ctx.stroke();
+
+    ctx.shadowBlur=0;
+
+
+    /* POINTS */
+
+    points.forEach(point=>{
+
+        ctx.beginPath();
+
+        ctx.arc(
+            point.x,
+            point.y,
+            4,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fillStyle="#00e5ff";
+        ctx.fill();
+
+        ctx.beginPath();
+
+        ctx.arc(
+            point.x,
+            point.y,
+            7,
+            0,
+            Math.PI*2
+        );
+
+        ctx.strokeStyle="rgba(0,229,255,.25)";
+        ctx.stroke();
+
+    });
+
+
+    /* LABELS */
+
+    ctx.font="10px Arial";
+    ctx.fillStyle="#5e7884";
+    ctx.textAlign="center";
+
+    labels.forEach((label,index)=>{
+
+        const x=
+            padding+
+            index*((width-padding-15)/(labels.length-1));
+
+        ctx.fillText(
+            label,
+            x,
+            248
+        );
+
+    });
+
+}
+
+drawChart();
+
+window.addEventListener(
+    "resize",
+    drawChart
+);
+
+</script>
+
+</body>
+</html>

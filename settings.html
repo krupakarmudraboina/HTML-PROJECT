@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SCAMSHIELD AI — Settings</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#03070d;
+    color:#e9fbff;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+/* BACKGROUND */
+
+#particles{
+    position:fixed;
+    inset:0;
+    z-index:-2;
+}
+
+.background-glow{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    background:
+        radial-gradient(circle at 15% 20%,rgba(0,229,255,.08),transparent 30%),
+        radial-gradient(circle at 85% 80%,rgba(0,100,255,.06),transparent 35%);
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    width:245px;
+    height:100vh;
+
+    background:rgba(3,10,18,.96);
+
+    border-right:1px solid rgba(0,229,255,.16);
+
+    padding:25px 15px;
+
+    z-index:10;
+}
+
+.logo{
+    text-align:center;
+    margin-bottom:35px;
+}
+
+.logo h1{
+    color:#00e5ff;
+    font-size:22px;
+    letter-spacing:2px;
+    text-shadow:0 0 15px #00e5ff;
+}
+
+.logo span{
+    display:block;
+    color:#627b86;
+    font-size:9px;
+    letter-spacing:3px;
+    margin-top:6px;
+}
+
+.nav a{
+    display:flex;
+    align-items:center;
+    gap:13px;
+
+    padding:14px 16px;
+    margin:7px 0;
+
+    color:#78939e;
+    text-decoration:none;
+
+    border-radius:10px;
+
+    transition:.3s;
+}
+
+.nav a:hover{
+    color:#00e5ff;
+    background:rgba(0,229,255,.07);
+    box-shadow:inset 3px 0 #00e5ff;
+}
+
+.nav a.active{
+    color:#00e5ff;
+    background:linear-gradient(
+        90deg,
+        rgba(0,229,255,.15),
+        rgba(0,229,255,.02)
+    );
+
+    box-shadow:inset 3px 0 #00e5ff;
+}
+
+.icon{
+    width:20px;
+    text-align:center;
+}
+
+/* SYSTEM */
+
+.system{
+    position:absolute;
+    left:20px;
+    right:20px;
+    bottom:25px;
+
+    padding:15px;
+
+    border-radius:10px;
+
+    border:1px solid rgba(0,229,255,.12);
+
+    background:rgba(0,229,255,.025);
+}
+
+.system-title{
+    font-size:9px;
+    letter-spacing:2px;
+    color:#5c7782;
+}
+
+.online{
+    margin-top:8px;
+    font-size:11px;
+    color:#48ff9b;
+}
+
+.dot{
+    display:inline-block;
+
+    width:7px;
+    height:7px;
+
+    border-radius:50%;
+
+    background:#48ff9b;
+
+    box-shadow:0 0 10px #48ff9b;
+
+    margin-right:6px;
+}
+
+/* MAIN */
+
+.main{
+    margin-left:245px;
+    padding:30px;
+}
+
+/* TOPBAR */
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:30px;
+}
+
+.title h2{
+    font-size:27px;
+    letter-spacing:1px;
+}
+
+.title p{
+    color:#68838e;
+    font-size:13px;
+    margin-top:7px;
+}
+
+.status{
+    padding:10px 16px;
+
+    border-radius:20px;
+
+    border:1px solid rgba(0,229,255,.2);
+
+    background:rgba(0,229,255,.04);
+
+    color:#00e5ff;
+
+    font-size:10px;
+
+    letter-spacing:1px;
+}
+
+/* SETTINGS GRID */
+
+.settings-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+/* CARD */
+
+.card{
+    background:rgba(7,17,27,.82);
+
+    border:1px solid rgba(0,229,255,.13);
+
+    border-radius:15px;
+
+    padding:22px;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.25);
+}
+
+.card.full{
+    grid-column:1/-1;
+}
+
+.card-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:22px;
+
+    padding-bottom:15px;
+
+    border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.card-header h3{
+    font-size:15px;
+}
+
+.card-header span{
+    font-size:9px;
+    color:#587480;
+    letter-spacing:1px;
+}
+
+/* PROFILE */
+
+.profile{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.avatar{
+    width:70px;
+    height:70px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:25px;
+    font-weight:bold;
+
+    color:#00e5ff;
+
+    border:2px solid #00e5ff;
+
+    background:rgba(0,229,255,.06);
+
+    box-shadow:
+        0 0 20px rgba(0,229,255,.15),
+        inset 0 0 20px rgba(0,229,255,.04);
+}
+
+.profile-info h4{
+    font-size:17px;
+}
+
+.profile-info p{
+    color:#68838e;
+    font-size:11px;
+    margin-top:5px;
+}
+
+.profile-badge{
+    display:inline-block;
+
+    margin-top:8px;
+
+    padding:4px 8px;
+
+    border-radius:5px;
+
+    font-size:8px;
+
+    color:#48ff9b;
+
+    background:rgba(72,255,155,.07);
+
+    border:1px solid rgba(72,255,155,.15);
+}
+
+/* FORM */
+
+.form-group{
+    margin-bottom:17px;
+}
+
+.form-group label{
+    display:block;
+
+    margin-bottom:7px;
+
+    color:#78929d;
+
+    font-size:10px;
+
+    letter-spacing:.5px;
+}
+
+.input{
+    width:100%;
+
+    padding:12px 13px;
+
+    background:#06111a;
+
+    border:1px solid rgba(0,229,255,.12);
+
+    border-radius:8px;
+
+    color:#dffaff;
+
+    outline:none;
+
+    font-size:12px;
+
+    transition:.3s;
+}
+
+.input:focus{
+    border-color:#00e5ff;
+
+    box-shadow:
+        0 0 0 2px rgba(0,229,255,.05),
+        0 0 15px rgba(0,229,255,.08);
+}
+
+/* TOGGLE */
+
+.setting-row{
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:15px 0;
+
+    border-bottom:1px solid rgba(255,255,255,.04);
+}
+
+.setting-row:last-child{
+    border-bottom:none;
+}
+
+.setting-info strong{
+    display:block;
+
+    font-size:12px;
+}
+
+.setting-info small{
+    display:block;
+
+    color:#607985;
+
+    font-size:9px;
+
+    margin-top:5px;
+    line-height:1.5;
+}
+
+/* SWITCH */
+
+.switch{
+    position:relative;
+
+    width:44px;
+    height:23px;
+
+    flex-shrink:0;
+}
+
+.switch input{
+    display:none;
+}
+
+.slider{
+    position:absolute;
+    inset:0;
+
+    background:#13232d;
+
+    border:1px solid #28414d;
+
+    border-radius:20px;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.slider::before{
+    content:"";
+
+    position:absolute;
+
+    width:17px;
+    height:17px;
+
+    left:2px;
+    top:2px;
+
+    border-radius:50%;
+
+    background:#607782;
+
+    transition:.3s;
+}
+
+.switch input:checked + .slider{
+    background:rgba(0,229,255,.15);
+
+    border-color:#00e5ff;
+}
+
+.switch input:checked + .slider::before{
+    transform:translateX(20px);
+
+    background:#00e5ff;
+
+    box-shadow:0 0 12px #00e5ff;
+}
+
+/* SELECT */
+
+.select{
+    width:180px;
+
+    background:#06111a;
+
+    color:#bfeef5;
+
+    border:1px solid rgba(0,229,255,.14);
+
+    border-radius:7px;
+
+    padding:9px;
+
+    outline:none;
+
+    font-size:11px;
+}
+
+/* BUTTONS */
+
+.button-row{
+    display:flex;
+
+    gap:10px;
+
+    margin-top:20px;
+}
+
+.btn{
+    padding:11px 17px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-size:10px;
+
+    letter-spacing:1px;
+
+    transition:.3s;
+}
+
+.primary{
+    background:#00d9f5;
+
+    color:#001116;
+
+    border:none;
+
+    font-weight:bold;
+}
+
+.primary:hover{
+    box-shadow:0 0 20px rgba(0,229,255,.35);
+    transform:translateY(-1px);
+}
+
+.secondary{
+    background:transparent;
+
+    color:#00e5ff;
+
+    border:1px solid rgba(0,229,255,.3);
+}
+
+.secondary:hover{
+    background:rgba(0,229,255,.07);
+}
+
+.danger{
+    background:transparent;
+
+    color:#ff5577;
+
+    border:1px solid rgba(255,85,119,.25);
+}
+
+.danger:hover{
+    background:rgba(255,85,119,.07);
+}
+
+/* SECURITY STATUS */
+
+.security-status{
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:12px;
+}
+
+.security-box{
+    padding:17px;
+
+    border-radius:10px;
+
+    background:rgba(0,229,255,.025);
+
+    border:1px solid rgba(0,229,255,.08);
+
+    text-align:center;
+}
+
+.security-box strong{
+    display:block;
+
+    color:#48ff9b;
+
+    font-size:14px;
+}
+
+.security-box span{
+    display:block;
+
+    color:#5f7985;
+
+    font-size:8px;
+
+    margin-top:7px;
+
+    letter-spacing:1px;
+}
+
+/* NOTIFICATION */
+
+.notification-list{
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:12px;
+}
+
+/* SAVE MESSAGE */
+
+.save-message{
+    position:fixed;
+
+    right:30px;
+    bottom:30px;
+
+    padding:14px 18px;
+
+    background:#071923;
+
+    border:1px solid rgba(72,255,155,.3);
+
+    color:#48ff9b;
+
+    border-radius:9px;
+
+    font-size:11px;
+
+    opacity:0;
+
+    transform:translateY(20px);
+
+    pointer-events:none;
+
+    transition:.3s;
+
+    z-index:50;
+}
+
+.save-message.show{
+    opacity:1;
+
+    transform:translateY(0);
+}
+
+/* FOOTER */
+
+.footer{
+    text-align:center;
+
+    margin-top:25px;
+
+    color:#405963;
+
+    font-size:9px;
+
+    letter-spacing:1px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1000px){
+
+    .settings-grid{
+        grid-template-columns:1fr;
+    }
+
+    .card.full{
+        grid-column:auto;
+    }
+
+}
+
+@media(max-width:750px){
+
+    .sidebar{
+        width:70px;
+        padding:20px 8px;
+    }
+
+    .logo h1{
+        font-size:10px;
+    }
+
+    .logo span,
+    .nav a span,
+    .system{
+        display:none;
+    }
+
+    .nav a{
+        justify-content:center;
+        padding:13px 5px;
+    }
+
+    .main{
+        margin-left:70px;
+        padding:20px 15px;
+    }
+
+    .topbar{
+        align-items:flex-start;
+    }
+
+    .title h2{
+        font-size:21px;
+    }
+
+    .security-status,
+    .notification-list{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="background-glow"></div>
+
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <h1>SCAMSHIELD AI</h1>
+
+        <span>
+            CYBER THREAT INTELLIGENCE
+        </span>
+
+    </div>
+
+
+    <nav class="nav">
+
+        <a href="dashboard.html">
+
+            <div class="icon">⌂</div>
+
+            <span>Dashboard</span>
+
+        </a>
+
+
+        <a href="ai-scanner.html">
+
+            <div class="icon">⌁</div>
+
+            <span>AI Scanner</span>
+
+        </a>
+
+
+        <a href="threat-analysis.html">
+
+            <div class="icon">⚠</div>
+
+            <span>Threat Analysis</span>
+
+        </a>
+
+
+        <a href="history.html">
+
+            <div class="icon">◷</div>
+
+            <span>Scan History</span>
+
+        </a>
+
+
+        <a href="analytics.html">
+
+            <div class="icon">▥</div>
+
+            <span>Analytics</span>
+
+        </a>
+
+
+        <a href="settings.html" class="active">
+
+            <div class="icon">⚙</div>
+
+            <span>Settings</span>
+
+        </a>
+
+    </nav>
+
+
+    <div class="system">
+
+        <div class="system-title">
+            SYSTEM STATUS
+        </div>
+
+        <div class="online">
+
+            <span class="dot"></span>
+
+            ALL SYSTEMS OPERATIONAL
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+
+    <div class="topbar">
+
+        <div class="title">
+
+            <h2>System Settings</h2>
+
+            <p>
+                Configure your SCAMSHIELD AI security environment
+            </p>
+
+        </div>
+
+
+        <div class="status">
+            ● SECURITY CONSOLE
+        </div>
+
+    </div>
+
+
+
+    <section class="settings-grid">
+
+
+        <!-- PROFILE -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <h3>Security Profile</h3>
+
+                <span>ACCOUNT</span>
+
+            </div>
+
+
+            <div class="profile">
+
+                <div class="avatar">
+                    A
+                </div>
+
+
+                <div class="profile-info">
+
+                    <h4>Security Administrator</h4>
+
+                    <p>
+                        admin@scamshield.ai
+                    </p>
+
+                    <span class="profile-badge">
+                        SYSTEM ADMIN
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="button-row">
+
+                <button
+                    class="btn secondary"
+                    onclick="showMessage('Profile editor opened')">
+
+                    EDIT PROFILE
+
+                </button>
+
+                <button
+                    class="btn primary"
+                    onclick="showMessage('Security profile verified')">
+
+                    VERIFY
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- SECURITY -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <h3>Account Security</h3>
+
+                <span>PROTECTION</span>
+
+            </div>
+
+
+            <div class="setting-row">
+
+                <div class="setting-info">
+
+                    <strong>Two-Factor Authentication</strong>
+
+                    <small>
+                        Add an additional authentication layer
+                    </small>
+
+                </div>
+
+
+                <label class="switch">
+
+                    <input
+                        type="checkbox"
+                        checked
+                        onchange="settingChanged('Two-Factor Authentication')">
+
+                    <span class="slider"></span>
+
+                </label>
+
+            </div>
+
+
+            <div class="setting-row">
+
+                <div class="setting-info">
+
+                    <strong>Login Alerts</strong>
+
+                    <small>
+                        Receive alerts when a new login occurs
+                    </small>
+
+                </div>
+
+
+                <label class="switch">
+
+                    <input
+                        type="checkbox"
+                        checked
+                        onchange="settingChanged('Login Alerts')">
+
+                    <span class="slider"></span>
+
+                </label>
+
+            </div>
+
+
+            <div class="setting-row">
+
+                <div class="setting-info">
+
+                    <strong>Session Protection</strong>
+
+                    <small>
+                        Automatically secure inactive sessions
+                    </small>
+
+                </div>
+
+
+                <label class="switch">
+
+                    <input
+                        type="checkbox"
+                        checked
+                        onchange="settingChanged('Session Protection')">
+
+                    <span class="slider"></span>
+
+                </label>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- SCANNER SETTINGS -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <h3>AI Scanner Configuration</h3>
+
+                <span>AI ENGINE</span>
+
+            </div>
+
+
+            <div class="setting-row">
+
+                <div class="setting-info">
+
+                    <strong>Deep Threat Analysis</strong>
+
+                    <small>
+                        Perform extended analysis on suspicious content
+                    </small>
+
+                </div>
+
+
+                <label class="switch">
+
+                    <input
+                        type="checkbox"
+                        checked
+                        onchange="settingChanged('Deep Threat Analysis')">
+
+                    <span class="slider"></span>
+
+                </label>
+
+            </div>
+
+
+            <div class="setting-row">
+
+                <div class="setting-info">
+
+                    <strong>URL Intelligence</strong>
+
+                    <small>
+                        Analyze suspicious links and redirect patterns
+                    </small>
+
+                </div>
+
+
+                <label class="switch">
+
+                    <input
+                        type="checkbox"
+                        checked
+                        onchange="settingChanged('URL Intelligence')">
+
+                    <span class="slider"></span>
+
+                </label>
+
+            </div>
+
+
+            <div class="setting-row">
+
+                <div class="setting-info">
+
+                    <strong>Detection Sensitivity</strong>
+
+                    <small>
+                        Select the threat detection sensitivity
+                    </small>
+
+                </div>
+
+
+                <select class="select"
+                    onchange="settingChanged('Detection Sensitivity')">
+
+                    <option>High</option>
+                    <option>Medium</option>
+                    <option>Low</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- NOTIFICATIONS -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <h3>Notification Center</h3>
+
+                <span>ALERTS</span>
+
+            </div>
+
+
+            <div class="notification-list">
+
+
+                <div class="setting-row">
+
+                    <div class="setting-info">
+
+                        <strong>Critical Threats</strong>
+
+                        <small>
+                            Immediate security alerts
+                        </small>
+
+                    </div>
+
+
+                    <label class="switch">
+
+                        <input
+                            type="checkbox"
+                            checked
+                            onchange="settingChanged('Critical Threats')">
+
+                        <span class="slider"></span>
+
+                    </label>
+
+                </div>
+
+
+                <div class="setting-row">
+
+                    <div class="setting-info">
+
+                        <strong>Daily Report</strong>
+
+                        <small>
+                            Security activity summary
+                        </small>
+
+                    </div>
+
+
+                    <label class="switch">
+
+                        <input
+                            type="checkbox"
+                            checked
+                            onchange="settingChanged('Daily Report')">
+
+                        <span class="slider"></span>
+
+                    </label>
+
+                </div>
+
+
+                <div class="setting-row">
+
+                    <div class="setting-info">
+
+                        <strong>Threat Intelligence</strong>
+
+                        <small>
+                            New threat intelligence updates
+                        </small>
+
+                    </div>
+
+
+                    <label class="switch">
+
+                        <input
+                            type="checkbox"
+                            checked
+                            onchange="settingChanged('Threat Intelligence')">
+
+                        <span class="slider"></span>
+
+                    </label>
+
+                </div>
+
+
+                <div class="setting-row">
+
+                    <div class="setting-info">
+
+                        <strong>System Updates</strong>
+
+                        <small>
+                            Platform and engine updates
+                        </small>
+
+                    </div>
+
+
+                    <label class="switch">
+
+                        <input
+                            type="checkbox"
+                            onchange="settingChanged('System Updates')">
+
+                        <span class="slider"></span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- SECURITY STATUS -->
+
+        <div class="card full">
+
+            <div class="card-header">
+
+                <h3>Security Status</h3>
+
+                <span>LIVE ENVIRONMENT</span>
+
+            </div>
+
+
+            <div class="security-status">
+
+
+                <div class="security-box">
+
+                    <strong>ACTIVE</strong>
+
+                    <span>AI ENGINE</span>
+
+                </div>
+
+
+                <div class="security-box">
+
+                    <strong>SECURE</strong>
+
+                    <span>ACCOUNT STATUS</span>
+
+                </div>
+
+
+                <div class="security-box">
+
+                    <strong>ENABLED</strong>
+
+                    <span>THREAT MONITORING</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- PASSWORD -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <h3>Change Password</h3>
+
+                <span>AUTHENTICATION</span>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    CURRENT PASSWORD
+                </label>
+
+                <input
+                    type="password"
+                    class="input"
+                    id="currentPassword"
+                    placeholder="Enter current password">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    NEW PASSWORD
+                </label>
+
+                <input
+                    type="password"
+                    class="input"
+                    id="newPassword"
+                    placeholder="Enter new password">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    CONFIRM PASSWORD
+                </label>
+
+                <input
+                    type="password"
+                    class="input"
+                    id="confirmPassword"
+                    placeholder="Confirm new password">
+
+            </div>
+
+
+            <button
+                class="btn primary"
+                onclick="changePassword()">
+
+                UPDATE PASSWORD
+
+            </button>
+
+        </div>
+
+
+
+        <!-- DANGER ZONE -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <h3>Session Control</h3>
+
+                <span>ACCESS MANAGEMENT</span>
+
+            </div>
+
+
+            <div class="setting-row">
+
+                <div class="setting-info">
+
+                    <strong>Active Session</strong>
+
+                    <small>
+                        Current browser session
+                    </small>
+
+                </div>
+
+                <span style="
+                    color:#48ff9b;
+                    font-size:10px;
+                ">
+                    ACTIVE
+                </span>
+
+            </div>
+
+
+            <div class="setting-row">
+
+                <div class="setting-info">
+
+                    <strong>Session Timeout</strong>
+
+                    <small>
+                        Automatic security timeout
+                    </small>
+
+                </div>
+
+
+                <select
+                    class="select"
+                    onchange="settingChanged('Session Timeout')">
+
+                    <option>30 Minutes</option>
+                    <option>1 Hour</option>
+                    <option>4 Hours</option>
+                    <option>Never</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="button-row">
+
+                <button
+                    class="btn danger"
+                    onclick="logout()">
+
+                    TERMINATE SESSION
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+    <div class="footer">
+
+        SCAMSHIELD AI • SECURITY CONFIGURATION CONSOLE • PROTOTYPE ENVIRONMENT
+
+    </div>
+
+</main>
+
+
+
+<!-- SAVE MESSAGE -->
+
+<div
+    class="save-message"
+    id="saveMessage">
+
+    ✓ SETTINGS UPDATED
+
+</div>
+
+
+
+<script>
+
+/* PARTICLE SYSTEM */
+
+const canvas =
+    document.getElementById("particles");
+
+const ctx =
+    canvas.getContext("2d");
+
+let particles=[];
+
+
+function resize(){
+
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+
+}
+
+resize();
+
+window.addEventListener(
+    "resize",
+    resize
+);
+
+
+for(let i=0;i<70;i++){
+
+    particles.push({
+
+        x:Math.random()*window.innerWidth,
+
+        y:Math.random()*window.innerHeight,
+
+        vx:(Math.random()-.5)*.3,
+
+        vy:(Math.random()-.5)*.3,
+
+        size:Math.random()*1.5+.5
+
+    });
+
+}
+
+
+function animate(){
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    particles.forEach(p=>{
+
+        p.x+=p.vx;
+        p.y+=p.vy;
+
+
+        if(p.x<0 || p.x>canvas.width)
+            p.vx*=-1;
+
+
+        if(p.y<0 || p.y>canvas.height)
+            p.vy*=-1;
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            p.x,
+            p.y,
+            p.size,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fillStyle=
+            "rgba(0,220,255,.4)";
+
+        ctx.fill();
+
+    });
+
+
+    for(let i=0;i<particles.length;i++){
+
+        for(let j=i+1;j<particles.length;j++){
+
+            let dx=
+                particles[i].x-
+                particles[j].x;
+
+            let dy=
+                particles[i].y-
+                particles[j].y;
+
+            let distance=
+                Math.sqrt(dx*dx+dy*dy);
+
+
+            if(distance<105){
+
+                ctx.beginPath();
+
+                ctx.moveTo(
+                    particles[i].x,
+                    particles[i].y
+                );
+
+                ctx.lineTo(
+                    particles[j].x,
+                    particles[j].y
+                );
+
+                ctx.strokeStyle=
+                    "rgba(0,190,255,.06)";
+
+                ctx.stroke();
+
+            }
+
+        }
+
+    }
+
+
+    requestAnimationFrame(animate);
+
+}
+
+animate();
+
+
+
+/* MESSAGE */
+
+function showMessage(message){
+
+    const box=
+        document.getElementById("saveMessage");
+
+    box.textContent=
+        "✓ "+message.toUpperCase();
+
+    box.classList.add("show");
+
+
+    setTimeout(()=>{
+
+        box.classList.remove("show");
+
+    },2200);
+
+}
+
+
+
+/* SETTINGS */
+
+function settingChanged(name){
+
+    showMessage(
+        name+" updated"
+    );
+
+}
+
+
+
+/* PASSWORD */
+
+function changePassword(){
+
+    const current=
+        document.getElementById(
+            "currentPassword"
+        ).value;
+
+    const newPassword=
+        document.getElementById(
+            "newPassword"
+        ).value;
+
+    const confirm=
+        document.getElementById(
+            "confirmPassword"
+        ).value;
+
+
+    if(!current ||
+       !newPassword ||
+       !confirm){
+
+        showMessage(
+            "Please fill all password fields"
+        );
+
+        return;
+
+    }
+
+
+    if(newPassword.length<8){
+
+        showMessage(
+            "Password must contain 8+ characters"
+        );
+
+        return;
+
+    }
+
+
+    if(newPassword!==confirm){
+
+        showMessage(
+            "Passwords do not match"
+        );
+
+        return;
+
+    }
+
+
+    showMessage(
+        "Password updated successfully"
+    );
+
+
+    document.getElementById(
+        "currentPassword"
+    ).value="";
+
+
+    document.getElementById(
+        "newPassword"
+    ).value="";
+
+
+    document.getElementById(
+        "confirmPassword"
+    ).value="";
+
+}
+
+
+
+/* LOGOUT */
+
+function logout(){
+
+    const confirmation=
+        confirm(
+            "Terminate current SCAMSHIELD AI session?"
+        );
+
+
+    if(confirmation){
+
+        sessionStorage.clear();
+
+        window.location.href=
+            "login.html";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
