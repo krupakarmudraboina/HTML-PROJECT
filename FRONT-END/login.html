@@ -3,27 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>SCAMSHIELD AI | Secure Login</title>
+    <title>SCAMSHIELD AI | Secure Enterprise Login</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
+        :root {
+            --bg-deep: #02060d;
+            --panel-bg: rgba(6, 13, 25, 0.78);
+            --border-glow: rgba(0, 217, 255, 0.2);
+            --border-glow-hover: rgba(0, 217, 255, 0.45);
+            --accent-cyan: #00d9ff;
+            --accent-blue: #0077ff;
+            --text-main: #f1f7fc;
+            --text-muted: #839bb2;
+            --error-red: #ff4d6d;
+            --success-green: #00ff88;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
             min-height: 100vh;
-            background: #02060d;
-            color: white;
-            overflow: hidden;
+            background: var(--bg-deep);
+            color: var(--text-main);
+            overflow-x: hidden;
         }
-
-        /* =========================
-           BACKGROUND
-        ========================= */
 
         #networkCanvas {
             position: fixed;
@@ -31,29 +44,21 @@
             width: 100%;
             height: 100%;
             z-index: 0;
+            opacity: 0.45;
         }
 
-        .background {
+        .background-overlay {
             position: fixed;
             inset: 0;
-            background:
-                radial-gradient(
-                    circle at 20% 20%,
-                    rgba(0, 217, 255, 0.12),
-                    transparent 30%
-                ),
-                radial-gradient(
-                    circle at 80% 80%,
-                    rgba(0, 120, 255, 0.10),
-                    transparent 30%
-                );
+            background: 
+                radial-gradient(circle at 15% 15%, rgba(0, 217, 255, 0.08), transparent 35%),
+                radial-gradient(circle at 85% 85%, rgba(0, 119, 255, 0.08), transparent 35%),
+                linear-gradient(rgba(0, 217, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 217, 255, 0.015) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
             z-index: 1;
             pointer-events: none;
         }
-
-        /* =========================
-           MAIN CONTAINER
-        ========================= */
 
         .page {
             position: relative;
@@ -62,122 +67,95 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 24px;
         }
 
         .login-wrapper {
             width: 100%;
-            max-width: 1050px;
-            min-height: 620px;
-
+            max-width: 1120px;
+            min-height: 660px;
             display: grid;
-            grid-template-columns: 1.05fr 0.95fr;
-
-            background: rgba(5, 12, 23, 0.82);
-            border: 1px solid rgba(0, 217, 255, 0.22);
-            border-radius: 24px;
-
+            grid-template-columns: 1.1fr 0.9fr;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-glow);
+            border-radius: 28px;
             overflow: hidden;
-
-            box-shadow:
-                0 0 40px rgba(0, 217, 255, 0.08),
-                inset 0 0 40px rgba(0, 217, 255, 0.02);
-
-            backdrop-filter: blur(20px);
+            box-shadow: 
+                0 30px 80px rgba(0, 0, 0, 0.6),
+                0 0 40px rgba(0, 217, 255, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
         }
-
-        /* =========================
-           LEFT SIDE
-        ========================= */
 
         .left-panel {
             position: relative;
-            padding: 55px;
-
+            padding: 50px 60px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-
-            border-right: 1px solid rgba(0, 217, 255, 0.12);
+            justify-content: space-between;
+            border-right: 1px solid rgba(0, 217, 255, 0.1);
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.04), transparent 60%);
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 45px;
+            gap: 16px;
         }
 
         .brand-logo {
-            width: 58px;
-            height: 58px;
-
+            width: 52px;
+            height: 52px;
             display: flex;
             align-items: center;
             justify-content: center;
-
-            border-radius: 16px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #00eaff,
-                    #006eff
-                );
-
-            color: #001018;
-
-            font-size: 26px;
-            font-weight: 900;
-
-            box-shadow:
-                0 0 25px rgba(0, 225, 255, 0.35);
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: #020912;
+            font-size: 24px;
+            font-weight: 800;
+            box-shadow: 0 0 25px rgba(0, 217, 255, 0.35);
         }
 
         .brand-text h1 {
-            font-size: 25px;
-            letter-spacing: 2px;
+            font-size: 20px;
+            letter-spacing: 2.5px;
+            font-weight: 700;
         }
 
         .brand-text span {
             display: block;
-            margin-top: 5px;
-
-            color: #00d9ff;
-            font-size: 11px;
+            margin-top: 3px;
+            color: var(--accent-cyan);
+            font-size: 10px;
             letter-spacing: 3px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .hero-content {
+            margin: 30px 0;
         }
 
         .hero-title {
-            font-size: clamp(38px, 5vw, 64px);
-            line-height: 1.05;
-
-            letter-spacing: -2px;
-
-            margin-bottom: 25px;
+            font-size: clamp(34px, 4vw, 52px);
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+            margin-bottom: 20px;
+            font-weight: 700;
         }
 
         .hero-title span {
-            color: #00ddff;
-
-            text-shadow:
-                0 0 20px rgba(0, 221, 255, 0.45);
+            color: var(--accent-cyan);
+            text-shadow: 0 0 25px rgba(0, 217, 255, 0.4);
         }
 
         .hero-description {
-            max-width: 500px;
-
-            color: #8ea4b9;
-
-            font-size: 15px;
-            line-height: 1.8;
-
-            margin-bottom: 35px;
+            max-width: 440px;
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.7;
         }
-
-        /* =========================
-           SECURITY FEATURES
-        ========================= */
 
         .features {
             display: grid;
@@ -186,76 +164,71 @@
         }
 
         .feature {
-            padding: 15px;
-
-            border: 1px solid rgba(0, 217, 255, 0.1);
+            padding: 14px;
+            border: 1px solid rgba(0, 217, 255, 0.08);
             border-radius: 12px;
+            background: rgba(255, 255, 255, 0.015);
+            transition: all 0.3s ease;
+        }
 
-            background: rgba(0, 217, 255, 0.025);
+        .feature:hover {
+            border-color: var(--border-glow-hover);
+            background: rgba(0, 217, 255, 0.03);
+            transform: translateY(-2px);
         }
 
         .feature-icon {
-            color: #00eaff;
-            font-size: 18px;
-            margin-bottom: 7px;
+            color: var(--accent-cyan);
+            font-size: 16px;
+            margin-bottom: 6px;
         }
 
         .feature-title {
-            font-size: 13px;
-            font-weight: bold;
+            font-size: 12px;
+            font-weight: 600;
         }
 
         .feature-text {
-            color: #687d91;
-            font-size: 11px;
-            margin-top: 4px;
+            color: var(--text-muted);
+            font-size: 10px;
+            margin-top: 2px;
         }
 
-        /* =========================
-           RIGHT SIDE
-        ========================= */
-
         .right-panel {
-            padding: 55px;
-
+            padding: 50px 60px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            background: linear-gradient(180deg, rgba(8, 16, 28, 0.6), rgba(4, 9, 16, 0.8));
         }
 
         .login-header {
-            margin-bottom: 35px;
+            margin-bottom: 30px;
         }
 
         .login-header h2 {
-            font-size: 31px;
-            margin-bottom: 9px;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
 
         .login-header p {
-            color: #72889d;
+            color: var(--text-muted);
             font-size: 13px;
         }
 
-        /* =========================
-           FORM
-        ========================= */
-
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .form-group label {
             display: block;
-
-            color: #9bb0c3;
-
-            font-size: 12px;
-            font-weight: bold;
-
-            margin-bottom: 9px;
-
-            letter-spacing: 0.5px;
+            color: #a4b8cb;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
         }
 
         .input-wrapper {
@@ -266,222 +239,156 @@
             position: absolute;
             left: 16px;
             top: 50%;
-
             transform: translateY(-50%);
-
-            color: #4f7189;
-            font-size: 15px;
-
+            color: #53718c;
+            font-size: 14px;
             pointer-events: none;
+            transition: color 0.3s;
         }
 
         input {
             width: 100%;
-
-            padding: 15px 45px;
-
-            background: rgba(0, 8, 18, 0.75);
-
-            border: 1px solid rgba(112, 145, 170, 0.18);
-            border-radius: 11px;
-
+            padding: 14px 45px;
+            background: rgba(2, 6, 12, 0.8);
+            border: 1px solid rgba(115, 148, 175, 0.15);
+            border-radius: 12px;
             outline: none;
-
-            color: white;
-
+            color: var(--text-main);
             font-size: 13px;
-
-            transition: 0.3s;
+            transition: all 0.3s ease;
         }
 
         input::placeholder {
-            color: #405366;
+            color: #3b5266;
         }
 
         input:focus {
-            border-color: #00d9ff;
-
-            box-shadow:
-                0 0 0 3px rgba(0, 217, 255, 0.06),
-                0 0 20px rgba(0, 217, 255, 0.06);
+            border-color: var(--accent-cyan);
+            background: rgba(2, 8, 16, 0.95);
+            box-shadow: 
+                0 0 0 3px rgba(0, 217, 255, 0.08),
+                0 0 20px rgba(0, 217, 255, 0.05);
         }
 
         .password-toggle {
             position: absolute;
-            right: 15px;
+            right: 14px;
             top: 50%;
-
             transform: translateY(-50%);
-
             background: none;
             border: none;
-
-            color: #557086;
-
+            color: #607b94;
             cursor: pointer;
-
-            font-size: 14px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: color 0.2s;
         }
 
         .password-toggle:hover {
-            color: #00d9ff;
+            color: var(--accent-cyan);
         }
-
-        /* =========================
-           OPTIONS
-        ========================= */
 
         .options {
             display: flex;
             justify-content: space-between;
             align-items: center;
-
-            margin: 5px 0 25px;
+            margin: 4px 0 24px;
         }
 
         .remember {
             display: flex;
             align-items: center;
             gap: 8px;
-
-            color: #72889d;
-
-            font-size: 11px;
+            color: var(--text-muted);
+            font-size: 12px;
             cursor: pointer;
+            user-select: none;
         }
 
         .remember input {
-            width: 14px;
-            height: 14px;
+            width: 15px;
+            height: 15px;
             padding: 0;
-            accent-color: #00d9ff;
+            accent-color: var(--accent-cyan);
+            cursor: pointer;
         }
 
         .forgot {
-            color: #00cfea;
-            font-size: 11px;
+            color: var(--accent-cyan);
+            font-size: 12px;
             cursor: pointer;
+            text-decoration: none;
+            transition: opacity 0.2s;
         }
 
-        /* =========================
-           LOGIN BUTTON
-        ========================= */
+        .forgot:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
 
         .login-button {
             width: 100%;
-
-            padding: 16px;
-
+            padding: 15px;
             border: none;
-            border-radius: 11px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #00d9ff,
-                    #006eff
-                );
-
-            color: #001018;
-
-            font-size: 13px;
-            font-weight: 900;
-
-            letter-spacing: 1px;
-
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: #020812;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
             cursor: pointer;
-
-            transition: 0.3s;
-
-            box-shadow:
-                0 0 25px rgba(0, 217, 255, 0.15);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 217, 255, 0.2);
         }
 
         .login-button:hover {
             transform: translateY(-2px);
-
-            box-shadow:
-                0 0 35px rgba(0, 217, 255, 0.35);
+            box-shadow: 0 6px 25px rgba(0, 217, 255, 0.4);
         }
-
-        .login-button:active {
-            transform: translateY(0);
-        }
-
-        /* =========================
-           STATUS
-        ========================= */
 
         .status {
             min-height: 20px;
-
             text-align: center;
-
-            margin-top: 18px;
-
+            margin-top: 16px;
             font-size: 11px;
-
             letter-spacing: 0.5px;
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        .status.error {
-            color: #ff5364;
-        }
-
-        .status.loading {
-            color: #00d9ff;
-        }
-
-        .status.success {
-            color: #00ff88;
-        }
-
-        /* =========================
-           SECURITY FOOTER
-        ========================= */
+        .status.error { color: var(--error-red); }
+        .status.loading { color: var(--accent-cyan); }
+        .status.success { color: var(--success-green); }
 
         .security-info {
             display: flex;
             justify-content: center;
             align-items: center;
-
-            gap: 7px;
-
-            margin-top: 30px;
-
-            color: #52697c;
-
+            gap: 8px;
+            margin-top: 26px;
+            color: #4c647b;
             font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.5px;
         }
 
         .security-dot {
             width: 6px;
             height: 6px;
-
-            background: #00ff88;
-
+            background: var(--success-green);
             border-radius: 50%;
-
-            box-shadow:
-                0 0 8px #00ff88;
+            box-shadow: 0 0 10px var(--success-green);
         }
-
-        /* =========================
-           LOADING OVERLAY
-        ========================= */
 
         .loading-overlay {
             position: fixed;
             inset: 0;
-
             display: none;
-
             justify-content: center;
             align-items: center;
-
-            background: rgba(1, 5, 10, 0.94);
-
+            background: rgba(2, 6, 12, 0.92);
             z-index: 100;
+            backdrop-filter: blur(16px);
         }
 
         .loading-box {
@@ -489,878 +396,300 @@
         }
 
         .loader {
-            width: 55px;
-            height: 55px;
-
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-
-            border: 3px solid rgba(0, 217, 255, 0.15);
-            border-top-color: #00d9ff;
-
+            border: 3px solid rgba(0, 217, 255, 0.1);
+            border-top-color: var(--accent-cyan);
             animation: spin 0.8s linear infinite;
-
-            margin: 0 auto 20px;
+            margin: 0 auto 18px;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
         }
 
         .loading-box h3 {
-            color: #00d9ff;
-            font-size: 15px;
+            color: var(--accent-cyan);
+            font-size: 14px;
             letter-spacing: 2px;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .loading-box p {
-            margin-top: 8px;
-
-            color: #61778b;
+            margin-top: 6px;
+            color: var(--text-muted);
             font-size: 11px;
         }
 
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
 
-        /* =========================
-           RESPONSIVE
-        ========================= */
-
-        @media (max-width: 850px) {
-
-            body {
-                overflow: auto;
-            }
-
-            .page {
-                padding: 15px;
-            }
-
+        @media (max-width: 900px) {
             .login-wrapper {
                 grid-template-columns: 1fr;
+                max-width: 500px;
             }
-
             .left-panel {
                 display: none;
             }
-
             .right-panel {
-                padding: 40px 25px;
-            }
-        }
-
-        @media (max-width: 450px) {
-
-            .right-panel {
-                padding: 30px 20px;
-            }
-
-            .login-header h2 {
-                font-size: 26px;
+                padding: 40px 30px;
             }
         }
     </style>
 </head>
-
 <body>
 
-    <!-- =========================
-         BACKGROUND
-    ========================= -->
-
     <canvas id="networkCanvas"></canvas>
-
-    <div class="background"></div>
-
-
-    <!-- =========================
-         LOGIN PAGE
-    ========================= -->
+    <div class="background-overlay"></div>
 
     <main class="page">
-
         <section class="login-wrapper">
 
             <!-- LEFT PANEL -->
-
             <div class="left-panel">
-
                 <div class="brand">
-
-                    <div class="brand-logo">
-                        S
-                    </div>
-
+                    <div class="brand-logo">S</div>
                     <div class="brand-text">
                         <h1>SCAMSHIELD AI</h1>
-                        <span>INTELLIGENT THREAT DEFENSE</span>
+                        <span>SECURE CONSOLE</span>
                     </div>
-
                 </div>
 
-
-                <h2 class="hero-title">
-                    Detect.
-                    <br>
-                    <span>Protect.</span>
-                    <br>
-                    Prevent.
-                </h2>
-
-
-                <p class="hero-description">
-                    An intelligent security platform designed to
-                    analyze suspicious messages, URLs, phone numbers,
-                    emails and digital transactions using advanced
-                    threat intelligence.
-                </p>
-
+                <div class="hero-content">
+                    <h2 class="hero-title">
+                        Detect.<br>
+                        <span>Protect.</span><br>
+                        Prevent.
+                    </h2>
+                    <p class="hero-description">
+                        Advanced threat intelligence platform engineered to analyze digital interactions, prevent malicious intrusions, and secure organizational assets in real-time.
+                    </p>
+                </div>
 
                 <div class="features">
-
                     <div class="feature">
-
-                        <div class="feature-icon">
-                            ◈
-                        </div>
-
-                        <div class="feature-title">
-                            AI Threat Detection
-                        </div>
-
-                        <div class="feature-text">
-                            Intelligent pattern analysis
-                        </div>
-
+                        <div class="feature-icon">◈</div>
+                        <div class="feature-title">AI Threat Detection</div>
+                        <div class="feature-text">Intelligent pattern analysis</div>
                     </div>
-
-
                     <div class="feature">
-
-                        <div class="feature-icon">
-                            ◉
-                        </div>
-
-                        <div class="feature-title">
-                            Real-Time Analysis
-                        </div>
-
-                        <div class="feature-text">
-                            Instant security assessment
-                        </div>
-
+                        <div class="feature-icon">◉</div>
+                        <div class="feature-title">Real-Time Engine</div>
+                        <div class="feature-text">Instant evaluation signals</div>
                     </div>
-
-
                     <div class="feature">
-
-                        <div class="feature-icon">
-                            ⛨
-                        </div>
-
-                        <div class="feature-title">
-                            Threat Intelligence
-                        </div>
-
-                        <div class="feature-text">
-                            Multi-layer threat signals
-                        </div>
-
+                        <div class="feature-icon">⛨</div>
+                        <div class="feature-title">Multi-Layer Shield</div>
+                        <div class="feature-text">Comprehensive perimeter defense</div>
                     </div>
-
-
                     <div class="feature">
-
-                        <div class="feature-icon">
-                            ◆
-                        </div>
-
-                        <div class="feature-title">
-                            Secure Console
-                        </div>
-
-                        <div class="feature-text">
-                            Central security dashboard
-                        </div>
-
+                        <div class="feature-icon">◆</div>
+                        <div class="feature-title">Secure Vault</div>
+                        <div class="feature-text">Encrypted administrative session</div>
                     </div>
-
                 </div>
-
             </div>
 
-
             <!-- RIGHT PANEL -->
-
             <div class="right-panel">
-
                 <div class="login-header">
-
-                    <h2>
-                        Welcome Back
-                    </h2>
-
-                    <p>
-                        Authenticate to access your security console.
-                    </p>
-
+                    <h2>Welcome Back</h2>
+                    <p>Authenticate with your administrative credentials.</p>
                 </div>
-
 
                 <form id="loginForm">
-
-                    <!-- EMAIL -->
-
                     <div class="form-group">
-
-                        <label for="email">
-                            EMAIL ADDRESS
-                        </label>
-
+                        <label for="email">EMAIL ADDRESS</label>
                         <div class="input-wrapper">
-
-                            <span class="input-icon">
-                                @
-                            </span>
-
-                            <input
-                                type="email"
-                                id="email"
-                                placeholder="admin@scamshield.ai"
-                                autocomplete="email"
-                                required
-                            >
-
+                            <span class="input-icon">@</span>
+                            <input type="email" id="email" placeholder="admin@scamshield.ai" autocomplete="email" required>
                         </div>
-
                     </div>
 
-
-                    <!-- PASSWORD -->
-
                     <div class="form-group">
-
-                        <label for="password">
-                            PASSWORD
-                        </label>
-
+                        <label for="password">PASSWORD</label>
                         <div class="input-wrapper">
-
-                            <span class="input-icon">
-                                🔒
-                            </span>
-
-                            <input
-                                type="password"
-                                id="password"
-                                placeholder="Enter your password"
-                                autocomplete="current-password"
-                                required
-                            >
-
-                            <button
-                                type="button"
-                                class="password-toggle"
-                                id="togglePassword"
-                            >
-                                SHOW
-                            </button>
-
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="password" placeholder="Enter security passphrase" autocomplete="current-password" required>
+                            <button type="button" class="password-toggle" id="togglePassword">SHOW</button>
                         </div>
-
                     </div>
-
-
-                    <!-- OPTIONS -->
 
                     <div class="options">
-
                         <label class="remember">
-
-                            <input
-                                type="checkbox"
-                                id="remember"
-                            >
-
-                            Remember me
-
+                            <input type="checkbox" id="remember">
+                            Remember session
                         </label>
-
-
-                        <span
-                            class="forgot"
-                            id="forgotPassword"
-                        >
-                            Forgot password?
-                        </span>
-
+                        <a class="forgot" id="forgotPassword">Forgot password?</a>
                     </div>
 
-
-                    <!-- LOGIN -->
-
-                    <button
-                        type="submit"
-                        class="login-button"
-                        id="loginButton"
-                    >
-                        ACCESS SECURITY CONSOLE
+                    <button type="submit" class="login-button" id="loginButton">
+                        AUTHENTICATE SESSION
                     </button>
 
-
-                    <!-- STATUS -->
-
-                    <div
-                        class="status"
-                        id="status"
-                    ></div>
-
+                    <div class="status" id="status"></div>
                 </form>
 
-
                 <div class="security-info">
-
                     <span class="security-dot"></span>
-
-                    SCAMSHIELD SECURE CONNECTION
-
+                    END-TO-END TLS 1.3 ENCRYPTION ACTIVE
                 </div>
-
             </div>
 
         </section>
-
     </main>
 
-
-    <!-- =========================
-         LOADING SCREEN
-    ========================= -->
-
-    <div
-        class="loading-overlay"
-        id="loadingOverlay"
-    >
-
+    <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-box">
-
             <div class="loader"></div>
-
-            <h3>
-                AUTHENTICATING
-            </h3>
-
-            <p>
-                Establishing secure connection...
-            </p>
-
+            <h3>AUTHENTICATING</h3>
+            <p>Establishing encrypted handshake...</p>
         </div>
-
     </div>
 
-
     <script>
+        const loginForm = document.getElementById("loginForm");
+        const emailInput = document.getElementById("email");
+        const passwordInput = document.getElementById("password");
+        const togglePassword = document.getElementById("togglePassword");
+        const loginButton = document.getElementById("loginButton");
+        const status = document.getElementById("status");
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        const forgotPassword = document.getElementById("forgotPassword");
 
-        /* ==========================================
-           ELEMENTS
-        ========================================== */
-
-        const loginForm =
-            document.getElementById("loginForm");
-
-        const emailInput =
-            document.getElementById("email");
-
-        const passwordInput =
-            document.getElementById("password");
-
-        const togglePassword =
-            document.getElementById("togglePassword");
-
-        const loginButton =
-            document.getElementById("loginButton");
-
-        const status =
-            document.getElementById("status");
-
-        const loadingOverlay =
-            document.getElementById("loadingOverlay");
-
-        const forgotPassword =
-            document.getElementById("forgotPassword");
-
-
-        /* ==========================================
-           PASSWORD SHOW / HIDE
-        ========================================== */
-
-        togglePassword.addEventListener(
-            "click",
-            function () {
-
-                if (
-                    passwordInput.type === "password"
-                ) {
-
-                    passwordInput.type = "text";
-
-                    togglePassword.textContent =
-                        "HIDE";
-
-                } else {
-
-                    passwordInput.type =
-                        "password";
-
-                    togglePassword.textContent =
-                        "SHOW";
-                }
-
+        togglePassword.addEventListener("click", () => {
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                togglePassword.textContent = "HIDE";
+            } else {
+                passwordInput.type = "password";
+                togglePassword.textContent = "SHOW";
             }
-        );
+        });
 
+        forgotPassword.addEventListener("click", (e) => {
+            e.preventDefault();
+            status.textContent = "Recovery instructions dispatched to system administration.";
+            status.className = "status loading";
+        });
 
-        /* ==========================================
-           FORGOT PASSWORD
-        ========================================== */
+        loginForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
 
-        forgotPassword.addEventListener(
-            "click",
-            function () {
-
-                status.textContent =
-                    "Password recovery module will be connected to the backend.";
-
-                status.className =
-                    "status loading";
-
+            if (!email || !password) {
+                status.textContent = "All security fields are mandatory.";
+                status.className = "status error";
+                return;
             }
-        );
 
-
-        /* ==========================================
-           LOGIN
-        ========================================== */
-
-        loginForm.addEventListener(
-            "submit",
-            function (event) {
-
-                event.preventDefault();
-
-
-                const email =
-                    emailInput.value.trim();
-
-                const password =
-                    passwordInput.value.trim();
-
-
-                /* BASIC VALIDATION */
-
-                if (email === "") {
-
-                    status.textContent =
-                        "Please enter your email address.";
-
-                    status.className =
-                        "status error";
-
-                    emailInput.focus();
-
-                    return;
-                }
-
-
-                if (password === "") {
-
-                    status.textContent =
-                        "Please enter your password.";
-
-                    status.className =
-                        "status error";
-
-                    passwordInput.focus();
-
-                    return;
-                }
-
-
-                /* EMAIL FORMAT CHECK */
-
-                const emailPattern =
-                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-
-                if (!emailPattern.test(email)) {
-
-                    status.textContent =
-                        "Please enter a valid email address.";
-
-                    status.className =
-                        "status error";
-
-                    emailInput.focus();
-
-                    return;
-                }
-
-
-                /* ==============================
-                   AUTHENTICATION START
-                ============================== */
-
-                loginButton.disabled = true;
-
-                loginButton.textContent =
-                    "AUTHENTICATING...";
-
-                status.textContent =
-                    "Verifying security credentials...";
-
-                status.className =
-                    "status loading";
-
-
-                loadingOverlay.style.display =
-                    "flex";
-
-
-                /* ==============================
-                   DEMO AUTHENTICATION
-                ============================== */
-
-                setTimeout(function () {
-
-                    status.textContent =
-                        "AUTHENTICATION SUCCESSFUL";
-
-                    status.className =
-                        "status success";
-
-
-                    loginButton.textContent =
-                        "ACCESS GRANTED";
-
-
-                    /*
-                       IMPORTANT:
-                       dashboard.html MUST be in
-                       the same folder as login.html.
-                    */
-
-                    setTimeout(function () {
-
-                        window.location.href =
-                            "dashboard.html";
-
-                    }, 800);
-
-
-                }, 1800);
-
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                status.textContent = "Invalid email format detected.";
+                status.className = "status error";
+                emailInput.focus();
+                return;
             }
-        );
 
+            loginButton.disabled = true;
+            loginButton.textContent = "VERIFYING CREDENTIALS...";
+            status.textContent = "Running security perimeter check...";
+            status.className = "status loading";
+            loadingOverlay.style.display = "flex";
 
-        /* ==========================================
-           NETWORK BACKGROUND
-        ========================================== */
+            setTimeout(() => {
+                status.textContent = "ACCESS GRANTED";
+                status.className = "status success";
+                loginButton.textContent = "REDIRECTING...";
 
-        const canvas =
-            document.getElementById(
-                "networkCanvas"
-            );
+                setTimeout(() => {
+                    window.location.href = "dashboard.html";
+                }, 800);
+            }, 1600);
+        });
 
-        const ctx =
-            canvas.getContext("2d");
-
-
+        // Network Node Background Animation
+        const canvas = document.getElementById("networkCanvas");
+        const ctx = canvas.getContext("2d");
         let particles = [];
-
-        let mouse = {
-            x: null,
-            y: null
-        };
-
+        let mouse = { x: null, y: null };
 
         function resizeCanvas() {
-
-            canvas.width =
-                window.innerWidth;
-
-            canvas.height =
-                window.innerHeight;
-
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
 
-
-        window.addEventListener(
-            "resize",
-            resizeCanvas
-        );
-
-
-        window.addEventListener(
-            "mousemove",
-            function (event) {
-
-                mouse.x =
-                    event.clientX;
-
-                mouse.y =
-                    event.clientY;
-
-            }
-        );
-
-
-        window.addEventListener(
-            "mouseout",
-            function () {
-
-                mouse.x = null;
-                mouse.y = null;
-
-            }
-        );
-
+        window.addEventListener("resize", resizeCanvas);
+        window.addEventListener("mousemove", (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+        window.addEventListener("mouseout", () => { mouse.x = null; mouse.y = null; });
 
         class Particle {
-
             constructor() {
-
-                this.x =
-                    Math.random() *
-                    canvas.width;
-
-                this.y =
-                    Math.random() *
-                    canvas.height;
-
-                this.vx =
-                    (Math.random() - 0.5)
-                    * 0.35;
-
-                this.vy =
-                    (Math.random() - 0.5)
-                    * 0.35;
-
-                this.size =
-                    Math.random() * 1.7 + 0.5;
-
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.3;
+                this.vy = (Math.random() - 0.5) * 0.3;
+                this.size = Math.random() * 1.5 + 0.5;
             }
-
-
             update() {
-
                 this.x += this.vx;
                 this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
 
-
-                if (
-                    this.x < 0 ||
-                    this.x > canvas.width
-                ) {
-
-                    this.vx *= -1;
-
-                }
-
-
-                if (
-                    this.y < 0 ||
-                    this.y > canvas.height
-                ) {
-
-                    this.vy *= -1;
-
-                }
-
-
-                if (
-                    mouse.x !== null &&
-                    mouse.y !== null
-                ) {
-
-                    const dx =
-                        this.x - mouse.x;
-
-                    const dy =
-                        this.y - mouse.y;
-
-                    const distance =
-                        Math.sqrt(
-                            dx * dx +
-                            dy * dy
-                        );
-
-
-                    if (distance < 120) {
-
-                        this.x +=
-                            dx / distance * 0.3;
-
-                        this.y +=
-                            dy / distance * 0.3;
-
+                if (mouse.x !== null && mouse.y !== null) {
+                    const dx = this.x - mouse.x;
+                    const dy = this.y - mouse.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 100) {
+                        this.x += (dx / dist) * 0.2;
+                        this.y += (dy / dist) * 0.2;
                     }
-
                 }
-
             }
-
-
             draw() {
-
                 ctx.beginPath();
-
-                ctx.arc(
-                    this.x,
-                    this.y,
-                    this.size,
-                    0,
-                    Math.PI * 2
-                );
-
-                ctx.fillStyle =
-                    "rgba(0,217,255,0.65)";
-
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = "rgba(0, 217, 255, 0.6)";
                 ctx.fill();
-
             }
-
         }
 
-
-        function createParticles() {
-
+        function initParticles() {
             particles = [];
-
-            const count =
-                Math.min(
-                    110,
-                    Math.floor(
-                        window.innerWidth / 12
-                    )
-                );
-
-
-            for (
-                let i = 0;
-                i < count;
-                i++
-            ) {
-
-                particles.push(
-                    new Particle()
-                );
-
-            }
-
+            const count = Math.min(90, Math.floor(window.innerWidth / 14));
+            for (let i = 0; i < count; i++) particles.push(new Particle());
         }
-
 
         function connectParticles() {
-
-            for (
-                let i = 0;
-                i < particles.length;
-                i++
-            ) {
-
-                for (
-                    let j = i + 1;
-                    j < particles.length;
-                    j++
-                ) {
-
-                    const dx =
-                        particles[i].x -
-                        particles[j].x;
-
-                    const dy =
-                        particles[i].y -
-                        particles[j].y;
-
-                    const distance =
-                        Math.sqrt(
-                            dx * dx +
-                            dy * dy
-                        );
-
-
-                    if (distance < 130) {
-
-                        const opacity =
-                            1 -
-                            distance / 130;
-
-
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 120) {
                         ctx.beginPath();
-
-                        ctx.moveTo(
-                            particles[i].x,
-                            particles[i].y
-                        );
-
-                        ctx.lineTo(
-                            particles[j].x,
-                            particles[j].y
-                        );
-
-                        ctx.strokeStyle =
-                            `rgba(0,217,255,${opacity * 0.12})`;
-
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(0, 217, 255, ${(1 - dist / 120) * 0.12})`;
                         ctx.lineWidth = 1;
-
                         ctx.stroke();
-
                     }
-
                 }
-
             }
-
         }
 
-
-        function animateNetwork() {
-
-            ctx.clearRect(
-                0,
-                0,
-                canvas.width,
-                canvas.height
-            );
-
-
-            particles.forEach(
-                particle => {
-
-                    particle.update();
-                    particle.draw();
-
-                }
-            );
-
-
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
             connectParticles();
-
-
-            requestAnimationFrame(
-                animateNetwork
-            );
-
+            requestAnimationFrame(animate);
         }
-
 
         resizeCanvas();
-
-        createParticles();
-
-        animateNetwork();
-
+        initParticles();
+        animate();
     </script>
-
 </body>
 </html>

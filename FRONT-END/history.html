@@ -1812,6 +1812,181 @@ tbody tr:hover{
 /* ==========================================
    SEARCH + FILTER
 ========================================== */
+const API_URL = "http://127.0.0.1:5000";
+
+async function loadScanHistory() {
+    try {
+        const response = await fetch(API_URL + "/history");
+
+        if (!response.ok) {
+            throw new Error("History API failed: " + response.status);
+        }
+
+        const data = await response.json();
+        const scans = data.scans || [];
+
+        const historyBody = document.getElementById("historyBody");
+
+        historyBody.innerHTML = "";
+
+        let high = 0;
+        let medium = 0;
+        let low = 0;
+
+        scans.forEach(scan => {
+
+            const type = String(scan.scan_type || "Message");
+            const risk = String(scan.risk_level || "LOW").toLowerCase();
+            const score = Number(scan.risk_score || 0);
+            const content = scan.content || "";
+            const createdAt = scan.created_at || "";
+
+            if (risk === "high") high++;
+            else if (risk === "medium") medium++;
+            else low++;
+
+            const row = document.createElement("tr");
+
+            row.dataset.type = type.toLowerCase();
+            row.dataset.risk = risk;
+
+            let icon = "✉";
+
+            if (type.toLowerCase() === "url") icon = "🔗";
+            else if (type.toLowerCase() === "phone") icon = "☎";
+            else if (type.toLowerCase() === "email") icon = "@";
+            else if (type.toLowerCase() === "upi") icon = "₹";
+
+            const riskClass =
+                risk === "high"
+                    ? "risk-high"
+                    : risk === "medium"
+                        ? "risk-medium"
+                        : "risk-low";
+
+            const scoreClass =
+                risk === "high"
+                    ? "red"
+                    : risk === "medium"
+                        ? "yellow"
+                        : "green";
+
+            const safeContent =
+                content.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+
+            row.innerHTML = `
+                <td>
+                    <div class="type">
+                        <div class="type-icon">${icon}</div>
+                        <div>
+                            <div class="type-name">
+                                ${type.toUpperCase()}
+                            </div>
+                            <div class="type-sub">
+                                AI analysis
+                            </div>
+                        </div>
+                    </div>
+                </td>
+
+                <td>
+                    ${content.length > 45
+                        ? content.substring(0, 45) + "..."
+                        : content}
+                </td>
+
+                <td>
+                    <span class="risk ${riskClass}">
+                        ${risk.toUpperCase()}
+                    </span>
+                </td>
+
+                <td>
+                    <span class="score ${scoreClass}">
+                        ${score}
+                    </span>
+                </td>
+
+                <td>
+                    ${formatScanTime(createdAt)}
+                </td>
+
+                <td>
+                    <div class="actions">
+                        <button
+                            class="action-btn"
+                            onclick="showDetails(
+                                '${safeContent}',
+                                '${type}',
+                                '${score}',
+                                '${risk.toUpperCase()}',
+                                'SCAMSHIELD AI Threat Analysis'
+                            )">
+                            VIEW
+                        </button>
+                    </div>
+                </td>
+            `;
+
+            historyBody.appendChild(row);
+        });
+
+        updateHistorySummary(
+            scans.length,
+            high,
+            medium,
+            low
+        );
+
+        filterRows();
+
+    } catch (error) {
+
+        console.error("SCAMSHIELD history error:", error);
+
+        document.getElementById("historyBody").innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align:center;padding:30px;">
+                    Unable to connect to SCAMSHIELD backend.
+                </td>
+            </tr>
+        `;
+    }
+}
+
+
+function updateHistorySummary(total, high, medium, low) {
+
+    const values =
+        document.querySelectorAll(".summary-value");
+
+    if (values.length >= 4) {
+        values[0].textContent = total;
+        values[1].textContent = high;
+        values[2].textContent = medium;
+        values[3].textContent = low;
+    }
+}
+
+
+function formatScanTime(timestamp) {
+
+    if (!timestamp) return "Just now";
+
+    const date = new Date(
+        timestamp.replace(" ", "T") + "Z"
+    );
+
+    if (isNaN(date.getTime())) {
+        return timestamp;
+    }
+
+    return date.toLocaleString();
+}
+
+
+loadScanHistory();
+
 
 const searchInput =
     document.getElementById("searchInput");

@@ -876,6 +876,166 @@ canvas{
 
 
 <script>
+const ANALYTICS_API =
+    "http://127.0.0.1:5000/analytics";
+
+async function loadAnalytics() {
+
+    try {
+
+        const response =
+            await fetch(ANALYTICS_API);
+
+        if (!response.ok) {
+            throw new Error(
+                "Analytics API failed: " +
+                response.status
+            );
+        }
+
+        const data =
+            await response.json();
+
+        console.log(
+            "SCAMSHIELD Analytics:",
+            data
+        );
+
+        const total =
+            Number(data.total || 0);
+
+        const high =
+            Number(data.high || 0);
+
+        const medium =
+            Number(data.medium || 0);
+
+        const low =
+            Number(data.low || 0);
+
+        const average =
+            Number(
+                data.average_risk_score || 0
+            );
+
+
+        /* =========================
+           KPI CARDS
+        ========================= */
+
+        const kpis =
+            document.querySelectorAll(
+                ".kpi-value"
+            );
+
+        if (kpis.length >= 4) {
+
+            kpis[0].textContent =
+                total;
+
+            const threatRate =
+                total > 0
+                    ? (((high + medium) / total) * 100)
+                    : 0;
+
+            kpis[1].textContent =
+                threatRate.toFixed(1) + "%";
+
+            kpis[2].textContent =
+                average.toFixed(1);
+
+            const protectionRate =
+                total > 0
+                    ? ((low / total) * 100)
+                    : 0;
+
+            kpis[3].textContent =
+                protectionRate.toFixed(1) + "%";
+        }
+
+
+        /* =========================
+           KPI LABELS
+        ========================= */
+
+        const labels =
+            document.querySelectorAll(
+                ".kpi-label"
+            );
+
+        if (labels.length >= 4) {
+
+            labels[0].textContent =
+                "Total Scans";
+
+            labels[1].textContent =
+                "Threat Detection Rate";
+
+            labels[2].textContent =
+                "Average Risk Score";
+
+            labels[3].textContent =
+                "Low-Risk Protection Rate";
+        }
+
+
+        /* =========================
+           DONUT
+        ========================= */
+
+        const donut =
+            document.querySelector(".donut");
+
+        if (donut && total > 0) {
+
+            const highPercent =
+                (high / total) * 100;
+
+            const mediumPercent =
+                (medium / total) * 100;
+
+            const lowPercent =
+                (low / total) * 100;
+
+            donut.style.background = `
+                conic-gradient(
+                    #ff4058 0% ${highPercent}%,
+                    #ffd84d ${highPercent}%
+                        ${highPercent + mediumPercent}%,
+                    #00ff91
+                        ${highPercent + mediumPercent}%
+                        100%
+                )
+            `;
+        }
+
+
+        /* =========================
+           DONUT CENTER
+        ========================= */
+
+        const donutCenter =
+            document.querySelector(
+                ".donut-center strong"
+            );
+
+        if (donutCenter) {
+            donutCenter.textContent = total;
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "SCAMSHIELD analytics error:",
+            error
+        );
+
+    }
+}
+
+
+loadAnalytics();
 
 /* PARTICLE NETWORK */
 const particleCanvas = document.getElementById("particles");
